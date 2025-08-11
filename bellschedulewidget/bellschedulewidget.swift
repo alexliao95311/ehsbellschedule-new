@@ -32,19 +32,25 @@ struct BellScheduleProvider: AppIntentTimelineProvider {
         let widgetData = WidgetDataProvider.shared.getWidgetData()
         let currentDate = Date()
         
-        // Update every minute during school hours, every 15 minutes otherwise
+        // Create multiple entries for frequent updates
+        var entries: [BellScheduleEntry] = []
+        
+        // Update every 30 seconds during school hours, every 2 minutes otherwise
         let isActiveTime = isSchoolActiveTime(currentDate)
-        let updateInterval: TimeInterval = isActiveTime ? 60 : 15 * 60
+        let updateInterval: TimeInterval = isActiveTime ? 30 : 2 * 60
         
-        let nextUpdate = Calendar.current.date(byAdding: .second, value: Int(updateInterval), to: currentDate) ?? currentDate
+        // Create entries for the next few updates
+        for i in 0..<10 {
+            let entryDate = Calendar.current.date(byAdding: .second, value: Int(updateInterval * Double(i)), to: currentDate) ?? currentDate
+            let entry = BellScheduleEntry(
+                date: entryDate,
+                configuration: configuration,
+                widgetData: widgetData
+            )
+            entries.append(entry)
+        }
         
-        let entry = BellScheduleEntry(
-            date: currentDate,
-            configuration: configuration,
-            widgetData: widgetData
-        )
-        
-        return Timeline(entries: [entry], policy: .after(nextUpdate))
+        return Timeline(entries: entries, policy: .after(Calendar.current.date(byAdding: .second, value: Int(updateInterval), to: currentDate) ?? currentDate))
     }
     
     private func isSchoolActiveTime(_ date: Date) -> Bool {
@@ -92,11 +98,15 @@ struct SmallWidgetView: View {
     
     var body: some View {
         VStack(spacing: 8) {
-            // Status
+            // Status badge
             Text(entry.widgetData.scheduleStatus)
-                .font(.caption)
-                .fontWeight(.medium)
-                .foregroundColor(.secondary)
+                .font(.caption2)
+                .fontWeight(.semibold)
+                .foregroundColor(.white)
+                .padding(.horizontal, 6)
+                .padding(.vertical, 2)
+                .background(Color.green.opacity(0.8))
+                .cornerRadius(4)
             
             // Main content
             if let currentPeriod = entry.widgetData.currentPeriodName,
@@ -105,7 +115,8 @@ struct SmallWidgetView: View {
                 VStack(spacing: 4) {
                     Text(currentPeriod)
                         .font(.headline)
-                        .fontWeight(.semibold)
+                        .fontWeight(.bold)
+                        .foregroundColor(.white)
                         .multilineTextAlignment(.center)
                         .lineLimit(2)
                     
@@ -114,7 +125,7 @@ struct SmallWidgetView: View {
                        let room = entry.widgetData.currentPeriodRoom {
                         Text("\(teacher) • Room \(room)")
                             .font(.caption2)
-                            .foregroundColor(.secondary)
+                            .foregroundColor(.white.opacity(0.8))
                             .multilineTextAlignment(.center)
                             .lineLimit(1)
                     }
@@ -122,8 +133,8 @@ struct SmallWidgetView: View {
                     Text(WidgetTimeFormatter.shared.formatCountdown(timeRemaining))
                         .font(.title2)
                         .fontWeight(.bold)
-                        .monospacedDigit()
                         .foregroundColor(.green)
+                        .monospacedDigit()
                 }
                 
             } else if let nextPeriod = entry.widgetData.nextPeriodName,
@@ -132,11 +143,13 @@ struct SmallWidgetView: View {
                 VStack(spacing: 4) {
                     Text("Next:")
                         .font(.caption)
-                        .foregroundColor(.secondary)
+                        .fontWeight(.semibold)
+                        .foregroundColor(.green)
                     
                     Text(nextPeriod)
                         .font(.subheadline)
                         .fontWeight(.medium)
+                        .foregroundColor(.white)
                         .multilineTextAlignment(.center)
                         .lineLimit(2)
                     
@@ -145,7 +158,7 @@ struct SmallWidgetView: View {
                        let room = entry.widgetData.nextPeriodRoom {
                         Text("\(teacher) • Room \(room)")
                             .font(.caption2)
-                            .foregroundColor(.secondary)
+                            .foregroundColor(.white.opacity(0.8))
                             .multilineTextAlignment(.center)
                             .lineLimit(1)
                     }
@@ -153,6 +166,7 @@ struct SmallWidgetView: View {
                     Text(WidgetTimeFormatter.shared.formatTime(startTime, use24Hour: entry.configuration.use24HourFormat))
                         .font(.headline)
                         .fontWeight(.semibold)
+                        .foregroundColor(.green)
                         .monospacedDigit()
                 }
                 
@@ -161,12 +175,13 @@ struct SmallWidgetView: View {
                 VStack(spacing: 4) {
                     Image(systemName: scheduleStatusIcon)
                         .font(.title2)
-                        .foregroundColor(.secondary)
+                        .foregroundColor(.green)
                     
                     Text(scheduleStatusMessage)
                         .font(.caption)
                         .multilineTextAlignment(.center)
-                        .foregroundColor(.secondary)
+                        .foregroundColor(.white.opacity(0.8))
+                        .lineLimit(3)
                 }
             }
             
@@ -174,6 +189,14 @@ struct SmallWidgetView: View {
         }
         .padding(.horizontal, 12)
         .padding(.vertical, 8)
+        .background(
+            LinearGradient(
+                colors: [Color.black.opacity(0.9), Color.gray.opacity(0.8)],
+                startPoint: .topLeading,
+                endPoint: .bottomTrailing
+            )
+        )
+        .cornerRadius(12)
     }
     
     private var scheduleStatusIcon: String {
@@ -216,62 +239,84 @@ struct MediumWidgetView: View {
         HStack(spacing: 16) {
             // Left side - Current/Next class info
             VStack(alignment: .leading, spacing: 8) {
+                // Status badge
                 Text(entry.widgetData.scheduleStatus)
                     .font(.caption)
-                    .fontWeight(.medium)
-                    .foregroundColor(.secondary)
+                    .fontWeight(.semibold)
+                    .foregroundColor(.white)
+                    .padding(.horizontal, 8)
+                    .padding(.vertical, 4)
+                    .background(Color.green.opacity(0.8))
+                    .cornerRadius(6)
                 
                 if let currentPeriod = entry.widgetData.currentPeriodName,
                    let _ = entry.widgetData.timeRemaining,
                    let endTime = entry.widgetData.currentPeriodEndTime {
                     // Currently in class
-                    VStack(alignment: .leading, spacing: 4) {
+                    VStack(alignment: .leading, spacing: 6) {
                         Text(currentPeriod)
-                            .font(.headline)
-                            .fontWeight(.semibold)
+                            .font(.title2)
+                            .fontWeight(.bold)
+                            .foregroundColor(.white)
+                            .lineLimit(2)
                         
                         // Show teacher and room if available
                         if let teacher = entry.widgetData.currentPeriodTeacher,
                            let room = entry.widgetData.currentPeriodRoom {
                             Text("\(teacher) • Room \(room)")
                                 .font(.caption)
-                                .foregroundColor(.secondary)
+                                .foregroundColor(.white.opacity(0.8))
+                                .lineLimit(1)
                         }
                         
-                        HStack {
-                            Text("Ends:")
-                            Text(WidgetTimeFormatter.shared.formatTime(endTime, use24Hour: entry.configuration.use24HourFormat))
+                        HStack(spacing: 4) {
+                            Image(systemName: "clock")
+                                .font(.caption)
+                                .foregroundColor(.green)
+                            
+                            Text("Ends: \(WidgetTimeFormatter.shared.formatTime(endTime, use24Hour: entry.configuration.use24HourFormat))")
+                                .font(.caption)
                                 .fontWeight(.medium)
+                                .foregroundColor(.white.opacity(0.9))
                                 .monospacedDigit()
                         }
-                        .font(.caption)
-                        .foregroundColor(.secondary)
                     }
                     
                 } else if let nextPeriod = entry.widgetData.nextPeriodName,
                           let startTime = entry.widgetData.nextPeriodStartTime {
                     // Next class
-                    VStack(alignment: .leading, spacing: 4) {
+                    VStack(alignment: .leading, spacing: 6) {
                         Text("Up Next:")
                             .font(.caption)
-                            .foregroundColor(.secondary)
+                            .fontWeight(.semibold)
+                            .foregroundColor(.green)
                         
                         Text(nextPeriod)
-                            .font(.headline)
-                            .fontWeight(.semibold)
+                            .font(.title2)
+                            .fontWeight(.bold)
+                            .foregroundColor(.white)
+                            .lineLimit(2)
                         
                         // Show teacher and room if available
                         if let teacher = entry.widgetData.nextPeriodTeacher,
                            let room = entry.widgetData.nextPeriodRoom {
                             Text("\(teacher) • Room \(room)")
                                 .font(.caption)
-                                .foregroundColor(.secondary)
+                                .foregroundColor(.white.opacity(0.8))
+                                .lineLimit(1)
                         }
                         
-                        Text(WidgetTimeFormatter.shared.formatTime(startTime, use24Hour: entry.configuration.use24HourFormat))
-                            .font(.subheadline)
-                            .fontWeight(.medium)
-                            .monospacedDigit()
+                        HStack(spacing: 4) {
+                            Image(systemName: "clock")
+                                .font(.caption)
+                                .foregroundColor(.green)
+                            
+                            Text("Starts: \(WidgetTimeFormatter.shared.formatTime(startTime, use24Hour: entry.configuration.use24HourFormat))")
+                                .font(.caption)
+                                .fontWeight(.medium)
+                                .foregroundColor(.white.opacity(0.9))
+                                .monospacedDigit()
+                        }
                     }
                 }
                 
@@ -279,32 +324,48 @@ struct MediumWidgetView: View {
             }
             
             // Right side - Timer/Progress
-            VStack {
+            VStack(spacing: 8) {
                 if let timeRemaining = entry.widgetData.timeRemaining {
                     // Countdown timer
-                    VStack(spacing: 4) {
+                    VStack(spacing: 6) {
                         Text(WidgetTimeFormatter.shared.formatCountdown(timeRemaining))
-                            .font(.title)
-                            .fontWeight(.bold)
-                            .monospacedDigit()
+                            .font(.system(size: 32, weight: .bold, design: .monospaced))
                             .foregroundColor(.green)
+                            .monospacedDigit()
                         
                         Text("remaining")
-                            .font(.caption2)
-                            .foregroundColor(.secondary)
+                            .font(.caption)
+                            .fontWeight(.medium)
+                            .foregroundColor(.white.opacity(0.8))
                     }
                     
                     // Progress indicator
                     if let progress = entry.widgetData.progress {
-                        ProgressView(value: progress)
-                            .progressViewStyle(LinearProgressViewStyle(tint: .green))
-                            .scaleEffect(y: 2)
+                        VStack(spacing: 4) {
+                            ProgressView(value: progress)
+                                .progressViewStyle(LinearProgressViewStyle(tint: .green))
+                                .scaleEffect(y: 3)
+                                .frame(height: 12)
+                            
+                            Text("\(Int(progress * 100))% complete")
+                                .font(.caption2)
+                                .foregroundColor(.white.opacity(0.7))
+                        }
                     }
                     
                 } else {
-                    Image(systemName: scheduleStatusIcon)
-                        .font(.largeTitle)
-                        .foregroundColor(.secondary)
+                    // No active timer
+                    VStack(spacing: 8) {
+                        Image(systemName: scheduleStatusIcon)
+                            .font(.system(size: 40))
+                            .foregroundColor(.green)
+                        
+                        Text(entry.widgetData.scheduleStatus)
+                            .font(.caption)
+                            .fontWeight(.medium)
+                            .foregroundColor(.white.opacity(0.8))
+                            .multilineTextAlignment(.center)
+                    }
                 }
                 
                 Spacer()
@@ -312,6 +373,14 @@ struct MediumWidgetView: View {
         }
         .padding(.horizontal, 16)
         .padding(.vertical, 12)
+        .background(
+            LinearGradient(
+                colors: [Color.black.opacity(0.9), Color.gray.opacity(0.8)],
+                startPoint: .topLeading,
+                endPoint: .bottomTrailing
+            )
+        )
+        .cornerRadius(16)
     }
     
     private var scheduleStatusIcon: String {

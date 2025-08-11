@@ -93,29 +93,35 @@ class ScheduleViewModel: ObservableObject {
         
         switch scheduleStatus {
         case .inClass(let period, let timeRemaining, let progress):
-            let className = preferences.getClassName(for: period)
+            let classInfo = preferences.getClassInfo(for: period)
             return WidgetData(
-                currentPeriodName: className,
+                currentPeriodName: classInfo.displayName,
                 currentPeriodEndTime: period.endDate,
+                currentPeriodTeacher: classInfo.teacher.isEmpty ? nil : classInfo.teacher,
+                currentPeriodRoom: classInfo.room.isEmpty ? nil : classInfo.room,
                 scheduleStatus: "In Class",
                 timeRemaining: timeRemaining,
                 progress: progress
             )
             
         case .passingPeriod(let nextPeriod, let timeUntilNext):
-            let nextClassName = preferences.getClassName(for: nextPeriod)
+            let classInfo = preferences.getClassInfo(for: nextPeriod)
             return WidgetData(
-                nextPeriodName: nextClassName,
+                nextPeriodName: classInfo.displayName,
                 nextPeriodStartTime: nextPeriod.startDate,
+                nextPeriodTeacher: classInfo.teacher.isEmpty ? nil : classInfo.teacher,
+                nextPeriodRoom: classInfo.room.isEmpty ? nil : classInfo.room,
                 scheduleStatus: "Passing Period",
                 timeRemaining: timeUntilNext
             )
             
         case .beforeSchool(let nextPeriod, let timeUntilNext):
-            let nextClassName = preferences.getClassName(for: nextPeriod)
+            let classInfo = preferences.getClassInfo(for: nextPeriod)
             return WidgetData(
-                nextPeriodName: nextClassName,
+                nextPeriodName: classInfo.displayName,
                 nextPeriodStartTime: nextPeriod.startDate,
+                nextPeriodTeacher: classInfo.teacher.isEmpty ? nil : classInfo.teacher,
+                nextPeriodRoom: classInfo.room.isEmpty ? nil : classInfo.room,
                 scheduleStatus: "Before School",
                 timeRemaining: timeUntilNext
             )
