@@ -154,39 +154,21 @@ struct ContentView: View {
         print("Updating tab bar appearance for tab: \(selectedTab)")
         let appearance = UITabBarAppearance()
         
-        if selectedTab == 0 {
-            // Schedule tab - Green background with white text/icons
-            appearance.configureWithOpaqueBackground()
-            appearance.backgroundColor = UIColor(Constants.Colors.secondaryGreen)
-            
-            // Configure normal state (unselected) - white for contrast against green
-            appearance.stackedLayoutAppearance.normal.iconColor = UIColor.white.withAlphaComponent(0.7)
-            appearance.stackedLayoutAppearance.normal.titleTextAttributes = [
-                .foregroundColor: UIColor.white.withAlphaComponent(0.7)
-            ]
-            
-            // Configure selected state - bright white for active state
-            appearance.stackedLayoutAppearance.selected.iconColor = UIColor.white
-            appearance.stackedLayoutAppearance.selected.titleTextAttributes = [
-                .foregroundColor: UIColor.white
-            ]
-        } else {
-            // Info and Settings tabs - White background with black text/icons
-            appearance.configureWithOpaqueBackground()
-            appearance.backgroundColor = UIColor.white
-            
-            // Configure normal state (unselected) - dark gray
-            appearance.stackedLayoutAppearance.normal.iconColor = UIColor.black.withAlphaComponent(0.6)
-            appearance.stackedLayoutAppearance.normal.titleTextAttributes = [
-                .foregroundColor: UIColor.black.withAlphaComponent(0.6)
-            ]
-            
-            // Configure selected state - black for active state
-            appearance.stackedLayoutAppearance.selected.iconColor = UIColor.black
-            appearance.stackedLayoutAppearance.selected.titleTextAttributes = [
-                .foregroundColor: UIColor.black
-            ]
-        }
+        // All tabs now use white background with black text/icons (like Settings)
+        appearance.configureWithOpaqueBackground()
+        appearance.backgroundColor = UIColor.white
+        
+        // Configure normal state (unselected) - dark gray
+        appearance.stackedLayoutAppearance.normal.iconColor = UIColor.black.withAlphaComponent(0.6)
+        appearance.stackedLayoutAppearance.normal.titleTextAttributes = [
+            .foregroundColor: UIColor.black.withAlphaComponent(0.6)
+        ]
+        
+        // Configure selected state - black for active state
+        appearance.stackedLayoutAppearance.selected.iconColor = UIColor.black
+        appearance.stackedLayoutAppearance.selected.titleTextAttributes = [
+            .foregroundColor: UIColor.black
+        ]
         
         // Apply appearance globally
         UITabBar.appearance().standardAppearance = appearance
