@@ -13,7 +13,7 @@ struct InformationView: View {
                     LazyVStack(spacing: 12) {
                         ForEach(filteredPeriods, id: \.number) { period in
                             periodCard(for: period)
-                                .id("\(period.number)-\(preferences.use24HourFormat)")
+                                .id("\(period.number)-false")
                         }
                     }
                     .padding(.horizontal, Constants.Layout.padding)
@@ -118,14 +118,14 @@ struct InformationView: View {
             timeInfoItem(
                 icon: "clock",
                 title: "Start Time",
-                value: TimeFormatter.shared.formatTime(period.startDate, use24Hour: preferences.use24HourFormat),
+                value: TimeFormatter.shared.formatTime(period.startDate, use24Hour: false),
                 color: Constants.Colors.success
             )
             
             timeInfoItem(
                 icon: "clock.badge.checkmark",
                 title: "End Time", 
-                value: TimeFormatter.shared.formatTime(period.endDate, use24Hour: preferences.use24HourFormat),
+                value: TimeFormatter.shared.formatTime(period.endDate, use24Hour: false),
                 color: Constants.Colors.warning
             )
             
@@ -197,16 +197,16 @@ struct ScheduleSummaryView: View {
                     summaryRow(
                         icon: "sunrise",
                         title: "First Period",
-                        value: TimeFormatter.shared.formatTime(firstPeriod.startDate, use24Hour: preferences.use24HourFormat)
+                        value: TimeFormatter.shared.formatTime(firstPeriod.startDate, use24Hour: false)
                     )
-                    .id("first-time-\(preferences.use24HourFormat)")
+                    .id("first-time-false")
                     
                     summaryRow(
                         icon: "sunset",
                         title: "Last Period Ends",
-                        value: TimeFormatter.shared.formatTime(lastPeriod.endDate, use24Hour: preferences.use24HourFormat)
+                        value: TimeFormatter.shared.formatTime(lastPeriod.endDate, use24Hour: false)
                     )
-                    .id("last-time-\(preferences.use24HourFormat)")
+                    .id("last-time-false")
                 }
             }
         }

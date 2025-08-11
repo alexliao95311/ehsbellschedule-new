@@ -12,7 +12,7 @@ import SwiftUI
 
 struct BellScheduleProvider: AppIntentTimelineProvider {
     func placeholder(in context: Context) -> BellScheduleEntry {
-        BellScheduleEntry(
+        return BellScheduleEntry(
             date: Date(),
             configuration: BellScheduleIntent(),
             widgetData: WidgetData(scheduleStatus: "Loading...")
@@ -45,7 +45,6 @@ struct BellScheduleProvider: AppIntentTimelineProvider {
             
             // Fetch fresh data for each entry to ensure accuracy
             let freshWidgetData = WidgetDataProvider.shared.getWidgetData()
-            print("📅 Timeline entry \(i): Using data from \(freshWidgetData.lastUpdated), time remaining: \(freshWidgetData.timeRemaining ?? 0)")
             
             let entry = BellScheduleEntry(
                 date: entryDate,
@@ -79,22 +78,26 @@ struct BellScheduleEntry: TimelineEntry {
 // MARK: - Widget Views
 
 struct BellScheduleWidgetView: View {
-    var entry: BellScheduleProvider.Entry
+    let entry: BellScheduleProvider.Entry
     @Environment(\.widgetFamily) var family
     
     var body: some View {
-        switch family {
-        case .systemSmall:
-            SmallWidgetView(entry: entry)
-        case .systemMedium:
-            MediumWidgetView(entry: entry)
-        case .systemLarge:
-            LargeWidgetView(entry: entry)
-        default:
-            SmallWidgetView(entry: entry)
+        Group {
+            switch family {
+            case .systemSmall:
+                SmallWidgetView(entry: entry)
+            case .systemMedium:
+                MediumWidgetView(entry: entry)
+            case .systemLarge:
+                LargeWidgetView(entry: entry)
+            default:
+                SmallWidgetView(entry: entry)
+            }
         }
     }
 }
+
+// MARK: - Helper Functions
 
 // MARK: - Small Widget
 
@@ -168,7 +171,7 @@ struct SmallWidgetView: View {
                             .lineLimit(1)
                     }
                     
-                    Text(WidgetTimeFormatter.shared.formatTime(startTime, use24Hour: entry.configuration.use24HourFormat))
+                    Text(WidgetTimeFormatter.shared.formatTime(startTime, use24Hour: false))
                         .font(.headline)
                         .fontWeight(.semibold)
                         .foregroundColor(.green)
@@ -275,7 +278,7 @@ struct MediumWidgetView: View {
                                 .font(.caption)
                                 .foregroundColor(.green)
                             
-                            Text("Ends: \(WidgetTimeFormatter.shared.formatTime(endTime, use24Hour: entry.configuration.use24HourFormat))")
+                            Text("Ends: \(WidgetTimeFormatter.shared.formatTime(endTime, use24Hour: false))")
                                 .font(.caption)
                                 .fontWeight(.medium)
                                 .foregroundColor(.white.opacity(0.9))
@@ -312,7 +315,7 @@ struct MediumWidgetView: View {
                                 .font(.caption)
                                 .foregroundColor(.green)
                             
-                            Text("Starts: \(WidgetTimeFormatter.shared.formatTime(startTime, use24Hour: entry.configuration.use24HourFormat))")
+                            Text("Starts: \(WidgetTimeFormatter.shared.formatTime(startTime, use24Hour: false))")
                                 .font(.caption)
                                 .fontWeight(.medium)
                                 .foregroundColor(.white.opacity(0.9))
@@ -415,7 +418,7 @@ struct LargeWidgetView: View {
                 
                 Spacer()
                 
-                Text(entry.date, style: .time)
+                Text(WidgetTimeFormatter.shared.formatTime(entry.date, use24Hour: false))
                     .font(.subheadline)
                     .fontWeight(.medium)
                     .monospacedDigit()
@@ -492,7 +495,7 @@ struct LargeWidgetView: View {
                                     .foregroundColor(.secondary)
                             }
                             
-                            Text("at \(WidgetTimeFormatter.shared.formatTime(startTime, use24Hour: entry.configuration.use24HourFormat))")
+                            Text("at \(WidgetTimeFormatter.shared.formatTime(startTime, use24Hour: false))")
                                 .font(.caption)
                                 .foregroundColor(.secondary)
                         }

@@ -117,40 +117,56 @@ class SettingsViewModel: ObservableObject {
         impactFeedback.impactOccurred()
     }
     
-    func exportSettings() -> [String: Any] {
-        return [
-            "use24HourFormat": preferences.use24HourFormat,
+    func exportSettings() -> String {
+        let settings: [String: Any] = [
             "showPeriod0": preferences.showPeriod0,
             "showPeriod7": preferences.showPeriod7,
             "customClassNames": preferences.customClassNames,
+            "customClassInfo": preferences.customClassInfo,
             "notificationMinutesBefore": preferences.notificationMinutesBefore,
-            "enablePassingPeriodNotifications": preferences.enablePassingPeriodNotifications
+            "enablePassingPeriodNotifications": preferences.enablePassingPeriodNotifications,
+            "backgroundImageName": preferences.backgroundImageName ?? "None"
         ]
+        
+        do {
+            let jsonData = try JSONSerialization.data(withJSONObject: settings, options: .prettyPrinted)
+            return String(data: jsonData, encoding: .utf8) ?? "Failed to export settings"
+        } catch {
+            return "Failed to export settings: \(error.localizedDescription)"
+        }
     }
     
-    func importSettings(from data: [String: Any]) {
-        if let use24Hour = data["use24HourFormat"] as? Bool {
-            preferences.use24HourFormat = use24Hour
-        }
+    func importSettings(_ jsonString: String) {
+        guard let jsonData = jsonString.data(using: .utf8) else { return }
         
-        if let showP0 = data["showPeriod0"] as? Bool {
-            preferences.showPeriod0 = showP0
-        }
-        
-        if let showP7 = data["showPeriod7"] as? Bool {
-            preferences.showPeriod7 = showP7
-        }
-        
-        if let classNames = data["customClassNames"] as? [Int: String] {
-            preferences.customClassNames = classNames
-        }
-        
-        if let notifMinutes = data["notificationMinutesBefore"] as? Int {
-            preferences.notificationMinutesBefore = notifMinutes
-        }
-        
-        if let passingNotifs = data["enablePassingPeriodNotifications"] as? Bool {
-            preferences.enablePassingPeriodNotifications = passingNotifs
+        do {
+            let settings = try JSONSerialization.jsonObject(with: jsonData) as? [String: Any]
+            
+            if let showPeriod0 = settings?["showPeriod0"] as? Bool {
+                preferences.showPeriod0 = showPeriod0
+            }
+            if let showPeriod7 = settings?["showPeriod7"] as? Bool {
+                preferences.showPeriod7 = showPeriod7
+            }
+            if let customClassNames = settings?["customClassNames"] as? [Int: String] {
+                preferences.customClassNames = customClassNames
+            }
+            if let customClassInfo = settings?["customClassInfo"] as? [Int: ClassInfo] {
+                preferences.customClassInfo = customClassInfo
+            }
+            if let notificationMinutesBefore = settings?["notificationMinutesBefore"] as? Int {
+                preferences.notificationMinutesBefore = notificationMinutesBefore
+            }
+            if let enablePassingPeriodNotifications = settings?["enablePassingPeriodNotifications"] as? Bool {
+                preferences.enablePassingPeriodNotifications = enablePassingPeriodNotifications
+            }
+            if let backgroundImageName = settings?["backgroundImageName"] as? String, backgroundImageName != "None" {
+                preferences.backgroundImageName = backgroundImageName
+            } else {
+                preferences.backgroundImageName = nil
+            }
+        } catch {
+            print("Failed to import settings: \(error.localizedDescription)")
         }
     }
 }

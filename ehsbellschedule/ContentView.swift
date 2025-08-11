@@ -38,19 +38,14 @@ struct ContentView: View {
         }
         .tint(Constants.Colors.primaryGreen)
         .onAppear {
-            print("🚀 ContentView appeared - Main app is running!")
-            setupInitialState()
             setupTabBarAppearance()
-            
-            // Set up frequent widget updates
-            setupFrequentWidgetUpdates()
+            updateWidgetData()
         }
         .onReceive(NotificationCenter.default.publisher(for: UIApplication.didBecomeActiveNotification)) { _ in
             print("📱 App became active - updating widget data")
             updateWidgetData()
         }
-        .onChange(of: selectedTab) { newValue in
-            print("Tab changed to: \(newValue)")
+        .onChange(of: selectedTab) { _ in
             updateTabBarAppearance()
         }
     }
@@ -69,80 +64,6 @@ struct ContentView: View {
             Task {
                 await notificationService.requestAuthorization()
             }
-        }
-    }
-    
-    private func updateWidgetData() {
-        print("🔄 ContentView: updateWidgetData() called")
-        let calculator = ScheduleCalculator.shared
-        let status = calculator.getScheduleStatus()
-        
-        print("📅 Schedule status: \(status)")
-        
-        // Check if it's a school day
-        let isSchoolDay = calculator.isSchoolDay()
-        print("🏫 Is school day: \(isSchoolDay)")
-        
-        let widgetData = createWidgetData(from: status)
-        print("📱 Created widget data: \(widgetData.scheduleStatus)")
-        print("   Current period: \(widgetData.currentPeriodName ?? "nil")")
-        print("   Teacher: \(widgetData.currentPeriodTeacher ?? "nil")")
-        print("   Room: \(widgetData.currentPeriodRoom ?? "nil")")
-        print("   Next period: \(widgetData.nextPeriodName ?? "nil")")
-        print("   Time remaining: \(widgetData.timeRemaining ?? 0)")
-        
-        DataPersistenceService.shared.saveWidgetData(widgetData)
-        print("💾 Widget data saved via DataPersistenceService")
-    }
-    
-    private func createWidgetData(from status: ScheduleStatus) -> WidgetData {
-        print("🔧 Creating widget data for status: \(status)")
-        
-        switch status {
-        case .inClass(let period, let timeRemaining, let progress):
-            let classInfo = preferences.getClassInfo(for: period)
-            print("   📚 In class: \(classInfo.displayName), Teacher: \(classInfo.teacher), Room: \(classInfo.room)")
-            return WidgetData(
-                currentPeriodName: classInfo.displayName,
-                currentPeriodEndTime: period.endDate,
-                currentPeriodTeacher: classInfo.teacher.isEmpty ? nil : classInfo.teacher,
-                currentPeriodRoom: classInfo.room.isEmpty ? nil : classInfo.room,
-                scheduleStatus: "In Class",
-                timeRemaining: timeRemaining,
-                progress: progress
-            )
-            
-        case .passingPeriod(let nextPeriod, let timeUntilNext):
-            let classInfo = preferences.getClassInfo(for: nextPeriod)
-            print("   🚶 Passing period: Next class \(classInfo.displayName), Teacher: \(classInfo.teacher), Room: \(classInfo.room)")
-            return WidgetData(
-                nextPeriodName: classInfo.displayName,
-                nextPeriodStartTime: nextPeriod.startDate,
-                nextPeriodTeacher: classInfo.teacher.isEmpty ? nil : classInfo.teacher,
-                nextPeriodRoom: classInfo.room.isEmpty ? nil : classInfo.room,
-                scheduleStatus: "Passing Period",
-                timeRemaining: timeUntilNext
-            )
-            
-        case .beforeSchool(let nextPeriod, let timeUntilNext):
-            let classInfo = preferences.getClassInfo(for: nextPeriod)
-            print("   🌅 Before school: Next class \(classInfo.displayName), Teacher: \(classInfo.teacher), Room: \(classInfo.room)")
-            return WidgetData(
-                nextPeriodName: classInfo.displayName,
-                nextPeriodStartTime: nextPeriod.startDate,
-                nextPeriodTeacher: classInfo.teacher.isEmpty ? nil : classInfo.teacher,
-                nextPeriodRoom: classInfo.room.isEmpty ? nil : classInfo.room,
-                scheduleStatus: "Before School",
-                timeRemaining: timeUntilNext
-            )
-            
-        case .afterSchool:
-            print("   🌆 After school")
-            return WidgetData(scheduleStatus: "After School")
-            
-        case .noSchool:
-            print("   🏠 No school today")
-            return WidgetData(scheduleStatus: "No School")
         }
     }
     
@@ -208,11 +129,55 @@ struct ContentView: View {
     
     // MARK: - Widget Update Management
     
-    private func setupFrequentWidgetUpdates() {
-        // Update widget data every 5 seconds to ensure it stays current
-        Timer.scheduledTimer(withTimeInterval: 5.0, repeats: true) { _ in
-            print("🔄 Frequent widget update triggered")
-            self.updateWidgetData()
+    private func updateWidgetData() {
+        let calculator = ScheduleCalculator.shared
+        let status = calculator.getScheduleStatus()
+        
+        switch status {
+        case .inClass(let period, let timeRemaining, let progress):
+            let classInfo = preferences.getClassInfo(for: period)
+            let widgetData = WidgetData(
+                currentPeriodName: classInfo.displayName,
+                currentPeriodEndTime: period.endDate,
+                currentPeriodTeacher: classInfo.teacher.isEmpty ? nil : classInfo.teacher,
+                currentPeriodRoom: classInfo.room.isEmpty ? nil : classInfo.room,
+                scheduleStatus: "In Class",
+                timeRemaining: timeRemaining,
+                progress: progress
+            )
+            DataPersistenceService.shared.saveWidgetData(widgetData)
+            
+        case .passingPeriod(let nextPeriod, let timeUntilNext):
+            let classInfo = preferences.getClassInfo(for: nextPeriod)
+            let widgetData = WidgetData(
+                nextPeriodName: classInfo.displayName,
+                nextPeriodStartTime: nextPeriod.startDate,
+                nextPeriodTeacher: classInfo.teacher.isEmpty ? nil : classInfo.teacher,
+                nextPeriodRoom: classInfo.room.isEmpty ? nil : classInfo.room,
+                scheduleStatus: "Passing Period",
+                timeRemaining: timeUntilNext
+            )
+            DataPersistenceService.shared.saveWidgetData(widgetData)
+            
+        case .beforeSchool(let nextPeriod, let timeUntilNext):
+            let classInfo = preferences.getClassInfo(for: nextPeriod)
+            let widgetData = WidgetData(
+                nextPeriodName: classInfo.displayName,
+                nextPeriodStartTime: nextPeriod.startDate,
+                nextPeriodTeacher: classInfo.teacher.isEmpty ? nil : classInfo.teacher,
+                nextPeriodRoom: classInfo.room.isEmpty ? nil : classInfo.room,
+                scheduleStatus: "Before School",
+                timeRemaining: timeUntilNext
+            )
+            DataPersistenceService.shared.saveWidgetData(widgetData)
+            
+        case .afterSchool:
+            let widgetData = WidgetData(scheduleStatus: "After School")
+            DataPersistenceService.shared.saveWidgetData(widgetData)
+            
+        case .noSchool:
+            let widgetData = WidgetData(scheduleStatus: "No School")
+            DataPersistenceService.shared.saveWidgetData(widgetData)
         }
     }
 }

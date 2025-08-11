@@ -12,10 +12,11 @@ class ScheduleViewModel: ObservableObject {
     private let scheduleCalculator = ScheduleCalculator.shared
     private let timeFormatter = TimeFormatter.shared
     private let dataService = DataPersistenceService.shared
+    private let preferences = UserPreferences.shared
     
-    private let dateFormatter: DateFormatter = {
+    private lazy var dateFormatter: DateFormatter = {
         let formatter = DateFormatter()
-        formatter.dateFormat = "EEEE, MMMM d, yyyy"
+        formatter.dateFormat = "EEEE, MMMM d, yyyy 'at' h:mm a"
         return formatter
     }()
     
@@ -143,12 +144,10 @@ class ScheduleViewModel: ObservableObject {
         updateWidgetData()
     }
     
-    func getFormattedTimeRange(for period: Period, use24Hour: Bool) -> String {
-        return timeFormatter.formatTimeRange(
-            start: period.startDate,
-            end: period.endDate,
-            use24Hour: use24Hour
-        )
+    func getFormattedTimeRange(for period: Period) -> String {
+        let startTime = TimeFormatter.shared.formatTime(period.startDate, use24Hour: false)
+        let endTime = TimeFormatter.shared.formatTime(period.endDate, use24Hour: false)
+        return "\(startTime) - \(endTime)"
     }
     
     func getFormattedCountdown(_ timeInterval: TimeInterval) -> String {

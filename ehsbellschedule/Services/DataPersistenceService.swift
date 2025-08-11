@@ -1,15 +1,12 @@
 import Foundation
 
-class DataPersistenceService {
+class DataPersistenceService: ObservableObject {
     static let shared = DataPersistenceService()
     
-    private let userDefaults: UserDefaults
-    private let sharedUserDefaults: UserDefaults?
+    private let userDefaults = UserDefaults.standard
+    private let sharedUserDefaults = UserDefaults(suiteName: Constants.appGroupIdentifier)
     
-    private init() {
-        self.userDefaults = UserDefaults.standard
-        self.sharedUserDefaults = UserDefaults(suiteName: Constants.appGroupIdentifier)
-    }
+    private init() {}
     
     // MARK: - Generic Storage Methods
     
@@ -57,23 +54,38 @@ class DataPersistenceService {
     
     // MARK: - User Preferences
     
-    var use24HourFormat: Bool {
-        get { userDefaults.bool(forKey: Constants.UserDefaultsKeys.use24HourFormat) }
-        set { userDefaults.set(newValue, forKey: Constants.UserDefaultsKeys.use24HourFormat) }
-    }
-    
     var showPeriod0: Bool {
-        get { userDefaults.object(forKey: Constants.UserDefaultsKeys.showPeriod0) as? Bool ?? true }
+        get { userDefaults.bool(forKey: Constants.UserDefaultsKeys.showPeriod0) }
         set { userDefaults.set(newValue, forKey: Constants.UserDefaultsKeys.showPeriod0) }
     }
     
     var showPeriod7: Bool {
-        get { userDefaults.object(forKey: Constants.UserDefaultsKeys.showPeriod7) as? Bool ?? true }
+        get { userDefaults.bool(forKey: Constants.UserDefaultsKeys.showPeriod7) }
         set { userDefaults.set(newValue, forKey: Constants.UserDefaultsKeys.showPeriod7) }
     }
     
+    var customClassNames: [String: String] {
+        get { userDefaults.object(forKey: Constants.UserDefaultsKeys.customClassNames) as? [String: String] ?? [:] }
+        set { userDefaults.set(newValue, forKey: Constants.UserDefaultsKeys.customClassNames) }
+    }
+    
+    var customClassInfo: [String: ClassInfo] {
+        get {
+            if let data = userDefaults.data(forKey: Constants.UserDefaultsKeys.customClassInfo),
+               let classInfo = try? JSONDecoder().decode([String: ClassInfo].self, from: data) {
+                return classInfo
+            }
+            return [:]
+        }
+        set {
+            if let data = try? JSONEncoder().encode(newValue) {
+                userDefaults.set(data, forKey: Constants.UserDefaultsKeys.customClassInfo)
+            }
+        }
+    }
+    
     var notificationMinutesBefore: Int {
-        get { userDefaults.object(forKey: Constants.UserDefaultsKeys.notificationMinutesBefore) as? Int ?? Constants.Timing.defaultNotificationMinutes }
+        get { userDefaults.integer(forKey: Constants.UserDefaultsKeys.notificationMinutesBefore) }
         set { userDefaults.set(newValue, forKey: Constants.UserDefaultsKeys.notificationMinutesBefore) }
     }
     
@@ -87,42 +99,22 @@ class DataPersistenceService {
         set { userDefaults.set(newValue, forKey: Constants.UserDefaultsKeys.backgroundImageName) }
     }
     
-    var notificationsEnabled: Bool {
-        get { userDefaults.object(forKey: Constants.UserDefaultsKeys.notificationsEnabled) as? Bool ?? false }
-        set { userDefaults.set(newValue, forKey: Constants.UserDefaultsKeys.notificationsEnabled) }
-    }
-    
     // MARK: - Widget Data Sharing
     
     func saveWidgetData(_ data: WidgetData) {
-        print("🔄 DataPersistenceService: Saving widget data")
-        print("   Schedule status: \(data.scheduleStatus)")
-        print("   Current period: \(data.currentPeriodName ?? "nil")")
-        print("   Teacher: \(data.currentPeriodTeacher ?? "nil")")
-        print("   Room: \(data.currentPeriodRoom ?? "nil")")
-        print("   Time remaining: \(data.timeRemaining ?? 0)")
-        print("   Last updated: \(data.lastUpdated)")
-        print("   Current time: \(Date())")
-        
         // Save to shared UserDefaults for widget access
         if let sharedDefaults = sharedUserDefaults {
             do {
                 let encoded = try JSONEncoder().encode(data)
                 sharedDefaults.set(encoded, forKey: "widgetData")
                 sharedDefaults.synchronize()
-                print("✅ Widget data saved to shared UserDefaults successfully")
-                print("   Data size: \(encoded.count) bytes")
-                print("   Shared UserDefaults path: \(sharedDefaults.dictionaryRepresentation().keys)")
             } catch {
                 print("❌ Failed to save widget data to shared UserDefaults: \(error)")
             }
-        } else {
-            print("❌ Shared UserDefaults not available")
         }
         
         // Also save to local UserDefaults as backup
         save(data, forKey: "widgetData")
-        print("✅ Widget data saved to local UserDefaults as backup")
     }
     
     func loadWidgetData() -> WidgetData? {
@@ -141,19 +133,27 @@ class DataPersistenceService {
     
     func resetUserPreferences() {
         let keysToRemove = [
-            Constants.UserDefaultsKeys.use24HourFormat,
             Constants.UserDefaultsKeys.showPeriod0,
             Constants.UserDefaultsKeys.showPeriod7,
             Constants.UserDefaultsKeys.customClassNames,
+            Constants.UserDefaultsKeys.customClassInfo,
             Constants.UserDefaultsKeys.notificationMinutesBefore,
             Constants.UserDefaultsKeys.enablePassingPeriodNotifications,
-            Constants.UserDefaultsKeys.backgroundImageName,
-            Constants.UserDefaultsKeys.notificationsEnabled
+            Constants.UserDefaultsKeys.backgroundImageName
         ]
         
-        keysToRemove.forEach { key in
+        for key in keysToRemove {
             userDefaults.removeObject(forKey: key)
         }
+        
+        // Reset to defaults
+        showPeriod0 = true
+        showPeriod7 = true
+        customClassNames = [:]
+        customClassInfo = [:]
+        notificationMinutesBefore = 2
+        enablePassingPeriodNotifications = true
+        backgroundImageName = nil
     }
     
     func synchronize() {

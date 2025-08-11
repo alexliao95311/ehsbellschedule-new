@@ -7,14 +7,14 @@ struct Constants {
     
     // MARK: - User Defaults Keys
     struct UserDefaultsKeys {
-        static let use24HourFormat = "use24HourFormat"
         static let showPeriod0 = "showPeriod0"
         static let showPeriod7 = "showPeriod7"
         static let customClassNames = "customClassNames"
+        static let customClassInfo = "customClassInfo"
         static let notificationMinutesBefore = "notificationMinutesBefore"
         static let enablePassingPeriodNotifications = "enablePassingPeriodNotifications"
         static let backgroundImageName = "backgroundImageName"
-        static let notificationsEnabled = "notificationsEnabled"
+        static let widgetData = "widgetData"
     }
     
     // MARK: - Notification Categories

@@ -40,11 +40,6 @@ struct ClassInfo: Codable {
 
 class UserPreferences: ObservableObject {
     static let shared = UserPreferences()
-    @Published var use24HourFormat: Bool {
-        didSet {
-            UserDefaults.standard.set(use24HourFormat, forKey: "use24HourFormat")
-        }
-    }
     
     @Published var showPeriod0: Bool {
         didSet {
@@ -93,8 +88,14 @@ class UserPreferences: ObservableObject {
     }
     
     private init() {
-        self.use24HourFormat = UserDefaults.standard.bool(forKey: "use24HourFormat")
-        self.showPeriod0 = UserDefaults.standard.object(forKey: "showPeriod0") as? Bool ?? true
+        // Try to read from shared UserDefaults first, then fall back to local
+        let sharedDefaults = UserDefaults(suiteName: "group.club.ehsprogramming.ehsbellschedule")
+        let localValue = UserDefaults.standard.object(forKey: "showPeriod0") as? Bool
+        let sharedValue = sharedDefaults?.object(forKey: "showPeriod0") as? Bool
+        
+        // Default to true if no preference is set
+        self.showPeriod0 = sharedValue ?? localValue ?? true
+        
         self.showPeriod7 = UserDefaults.standard.object(forKey: "showPeriod7") as? Bool ?? true
         self.notificationMinutesBefore = UserDefaults.standard.object(forKey: "notificationMinutesBefore") as? Int ?? 2
         self.enablePassingPeriodNotifications = UserDefaults.standard.bool(forKey: "enablePassingPeriodNotifications")
@@ -171,7 +172,6 @@ class UserPreferences: ObservableObject {
     }
     
     func resetToDefaults() {
-        use24HourFormat = false
         showPeriod0 = true
         showPeriod7 = true
         customClassNames = [:]

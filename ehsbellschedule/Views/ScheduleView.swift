@@ -20,7 +20,6 @@ struct ScheduleView: View {
             .padding(.horizontal, Constants.Layout.padding)
             .padding(.top, 60)
         }
-        .id(preferences.use24HourFormat) // Force refresh when format changes
         .onAppear {
             scheduleViewModel.startTimer()
         }
@@ -142,7 +141,7 @@ struct ScheduleView: View {
                 Text(TimeFormatter.shared.formatTimeRange(
                     start: nextPeriod.startDate,
                     end: nextPeriod.endDate,
-                    use24Hour: preferences.use24HourFormat
+                    use24Hour: false
                 ))
                 .font(Constants.Fonts.body)
                 .foregroundColor(.white.opacity(0.8))
@@ -204,7 +203,7 @@ struct ScheduleView: View {
             Text(TimeFormatter.shared.formatTimeRange(
                 start: period.startDate,
                 end: period.endDate,
-                use24Hour: preferences.use24HourFormat
+                use24Hour: false
             ))
             .font(Constants.Fonts.headline)
             .foregroundColor(.white.opacity(0.9))
@@ -330,7 +329,7 @@ struct ScheduleView: View {
             
             Spacer()
             
-            Text(TimeFormatter.shared.formatTime(period.startDate, use24Hour: preferences.use24HourFormat))
+            Text(TimeFormatter.shared.formatTime(period.startDate, use24Hour: false))
                 .font(Constants.Fonts.body)
                 .foregroundColor(.white.opacity(0.9))
                 .fontWeight(.medium)

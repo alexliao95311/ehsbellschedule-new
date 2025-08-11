@@ -54,7 +54,6 @@ class NotificationService: ObservableObject {
             let granted = try await center.requestAuthorization(options: [.alert, .sound, .badge])
             await MainActor.run {
                 self.isAuthorized = granted
-                self.persistence.notificationsEnabled = granted
             }
             
             if granted {

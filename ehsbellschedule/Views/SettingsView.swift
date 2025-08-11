@@ -14,7 +14,6 @@ struct SettingsView: View {
     var body: some View {
         NavigationView {
             List {
-                displaySettingsSection
                 scheduleSettingsSection
                 notificationSettingsSection
                 customizationSection
@@ -48,32 +47,6 @@ struct SettingsView: View {
             Button("OK") { }
         } message: {
             Text(testResultMessage)
-        }
-    }
-    
-    // MARK: - Display Settings Section
-    
-    private var displaySettingsSection: some View {
-        Section("Display") {
-            Toggle("24-Hour Time Format", isOn: $preferences.use24HourFormat)
-                .tint(Constants.Colors.primaryGreen)
-            
-            HStack {
-                Image(systemName: "clock")
-                    .foregroundColor(Constants.Colors.primaryGreen)
-                    .frame(width: 24)
-                
-                VStack(alignment: .leading, spacing: 2) {
-                    Text("Time Format")
-                        .font(Constants.Fonts.body)
-                    
-                    Text(preferences.use24HourFormat ? "15:30" : "3:30 PM")
-                        .font(Constants.Fonts.caption)
-                        .foregroundColor(Constants.Colors.textSecondary)
-                }
-                
-                Spacer()
-            }
         }
     }
     

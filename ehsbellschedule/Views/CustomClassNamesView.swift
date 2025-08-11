@@ -62,12 +62,11 @@ struct CustomClassNamesView: View {
                         .font(Constants.Fonts.headline)
                         .foregroundColor(Constants.Colors.textPrimary)
                     
-                    Text(TimeFormatter.shared.formatTimeRange(
-                        start: period.startDate,
-                        end: period.endDate,
-                        use24Hour: preferences.use24HourFormat
+                    Text(TimeFormatter.shared.formatTime(
+                        period.startDate,
+                        use24Hour: false
                     ))
-                    .id("time-\(period.number)-\(preferences.use24HourFormat)")
+                    .id("time-\(period.number)")
                     .font(Constants.Fonts.caption)
                     .foregroundColor(Constants.Colors.textSecondary)
                 }
