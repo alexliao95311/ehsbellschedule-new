@@ -22,9 +22,10 @@ struct InformationView: View {
             }
             .navigationTitle("Schedule Information")
             .navigationBarTitleDisplayMode(.large)
-            .background(Constants.Colors.backgroundGray.ignoresSafeArea())
+            .background(Constants.Colors.backgroundGray(preferences.isDarkMode).ignoresSafeArea())
         }
         .navigationViewStyle(.stack)
+        .id(preferences.isDarkMode) // Force refresh when dark mode changes
     }
     
     // MARK: - Schedule Type Selector
@@ -41,10 +42,10 @@ struct InformationView: View {
             .padding(.vertical, 12)
             
             Rectangle()
-                .fill(Color.gray.opacity(0.2))
+                .fill(Constants.Colors.textSecondary(preferences.isDarkMode).opacity(0.2))
                 .frame(height: 1)
         }
-        .background(Constants.Colors.cardBackground)
+        .background(Constants.Colors.cardBackground(preferences.isDarkMode))
     }
     
     // MARK: - Filtered Periods
@@ -68,18 +69,18 @@ struct InformationView: View {
                     
                     Text(classInfo.displayName)
                         .font(Constants.Fonts.headline)
-                        .foregroundColor(Constants.Colors.textPrimary)
+                        .foregroundColor(Constants.Colors.textPrimary(preferences.isDarkMode))
                         .fontWeight(.semibold)
                     
                     if classInfo.hasDetails {
                         Text(classInfo.detailsText)
                             .font(Constants.Fonts.caption)
-                            .foregroundColor(Constants.Colors.textSecondary)
+                            .foregroundColor(Constants.Colors.textSecondary(preferences.isDarkMode))
                     }
                     
                     Text(period.displayName)
                         .font(Constants.Fonts.body)
-                        .foregroundColor(Constants.Colors.textSecondary)
+                        .foregroundColor(Constants.Colors.textSecondary(preferences.isDarkMode))
                 }
                 
                 Spacer()
@@ -91,7 +92,7 @@ struct InformationView: View {
             timeInfoSection(for: period)
         }
         .padding(20)
-        .background(Constants.Colors.cardBackground)
+        .background(Constants.Colors.cardBackground(preferences.isDarkMode))
         .cornerRadius(Constants.Layout.cardCornerRadius)
         .shadow(color: .black.opacity(0.05), radius: 8, x: 0, y: 2)
     }
@@ -106,7 +107,7 @@ struct InformationView: View {
                 Circle()
                     .fill(
                         LinearGradient(
-                            colors: [Constants.Colors.primaryGreen, Constants.Colors.secondaryGreen],
+                            colors: [Constants.Colors.primaryGreen(preferences.isDarkMode), Constants.Colors.secondaryGreen(preferences.isDarkMode)],
                             startPoint: .topLeading,
                             endPoint: .bottomTrailing
                         )
@@ -134,7 +135,7 @@ struct InformationView: View {
                 icon: "timer",
                 title: "Duration",
                 value: TimeFormatter.shared.formatDuration(period.duration),
-                color: Constants.Colors.primaryGreen
+                color: Constants.Colors.primaryGreen(preferences.isDarkMode)
             )
         }
     }
@@ -148,11 +149,11 @@ struct InformationView: View {
             VStack(alignment: .leading, spacing: 2) {
                 Text(title)
                     .font(Constants.Fonts.caption)
-                    .foregroundColor(Constants.Colors.textSecondary)
+                    .foregroundColor(Constants.Colors.textSecondary(preferences.isDarkMode))
                 
                 Text(value)
                     .font(Constants.Fonts.body)
-                    .foregroundColor(Constants.Colors.textPrimary)
+                    .foregroundColor(Constants.Colors.textPrimary(preferences.isDarkMode))
                     .fontWeight(.medium)
                     .monospacedDigit()
             }
@@ -177,7 +178,7 @@ struct ScheduleSummaryView: View {
         VStack(alignment: .leading, spacing: 12) {
             Text("Schedule Summary")
                 .font(Constants.Fonts.headline)
-                .foregroundColor(Constants.Colors.textPrimary)
+                .foregroundColor(Constants.Colors.textPrimary(preferences.isDarkMode))
                 .fontWeight(.semibold)
             
             VStack(alignment: .leading, spacing: 8) {
@@ -212,7 +213,7 @@ struct ScheduleSummaryView: View {
             }
         }
         .padding(20)
-        .background(Constants.Colors.cardBackground)
+        .background(Constants.Colors.cardBackground(preferences.isDarkMode))
         .cornerRadius(Constants.Layout.cardCornerRadius)
         .shadow(color: .black.opacity(0.05), radius: 8, x: 0, y: 2)
     }
@@ -220,18 +221,18 @@ struct ScheduleSummaryView: View {
     private func summaryRow(icon: String, title: String, value: String) -> some View {
         HStack {
             Image(systemName: icon)
-                .foregroundColor(Constants.Colors.primaryBlue)
+                .foregroundColor(Constants.Colors.primaryGreen(preferences.isDarkMode))
                 .frame(width: 20)
             
             Text(title)
                 .font(Constants.Fonts.body)
-                .foregroundColor(Constants.Colors.textSecondary)
+                .foregroundColor(Constants.Colors.textSecondary(preferences.isDarkMode))
             
             Spacer()
             
             Text(value)
                 .font(Constants.Fonts.body)
-                .foregroundColor(Constants.Colors.textPrimary)
+                .foregroundColor(Constants.Colors.textPrimary(preferences.isDarkMode))
                 .fontWeight(.medium)
         }
     }

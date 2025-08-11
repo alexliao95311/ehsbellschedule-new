@@ -36,6 +36,7 @@ struct ScheduleView: View {
                         Text("Custom Class Names")
                             .font(.headline)
                             .fontWeight(.semibold)
+                            .foregroundColor(Constants.Colors.textPrimary(preferences.isDarkMode))
                         
                         Spacer()
                         
@@ -44,13 +45,15 @@ struct ScheduleView: View {
                         }) {
                             Image(systemName: "xmark.circle.fill")
                                 .font(.title2)
-                                .foregroundColor(.gray)
+                                .foregroundColor(Constants.Colors.textSecondary(preferences.isDarkMode))
                         }
                     }
                     .padding(.horizontal)
                     .padding(.top)
+                    .background(Constants.Colors.backgroundGray(preferences.isDarkMode))
                     
                     Divider()
+                        .background(Constants.Colors.textSecondary(preferences.isDarkMode))
                     
                     // The actual CustomClassNamesView content
                     CustomClassNamesView(onDismiss: {
@@ -58,10 +61,13 @@ struct ScheduleView: View {
                     })
                         .navigationBarHidden(true)
                 }
+                .background(Constants.Colors.backgroundGray(preferences.isDarkMode))
             }
+            .background(Constants.Colors.backgroundGray(preferences.isDarkMode))
             .presentationDetents([.medium, .large])
         }
         .id(preferences.use24HourFormat) // Force refresh when format changes
+        .id(preferences.isDarkMode) // Force refresh when dark mode changes
         .onAppear {
             scheduleViewModel.startTimer()
         }
@@ -84,7 +90,7 @@ struct ScheduleView: View {
                         .ignoresSafeArea()
                 )
         } else {
-            Constants.Colors.backgroundGray.ignoresSafeArea()
+            Constants.Colors.backgroundGray(preferences.isDarkMode).ignoresSafeArea()
         }
     }
     
@@ -93,7 +99,7 @@ struct ScheduleView: View {
     private var footerView: some View {
         VStack(spacing: 0) {
             Divider()
-                .background(Color(.separator))
+                .background(Constants.Colors.textSecondary(preferences.isDarkMode))
             
             HStack {
                 Button(action: {
@@ -101,32 +107,32 @@ struct ScheduleView: View {
                 }) {
                     HStack {
                         Image(systemName: "pencil")
-                            .foregroundColor(Constants.Colors.primaryGreen)
+                            .foregroundColor(Constants.Colors.primaryGreen(preferences.isDarkMode))
                             .frame(width: 24)
                         
                         VStack(alignment: .leading, spacing: 2) {
                             Text("Custom Class Names")
                                 .font(Constants.Fonts.body)
-                                .foregroundColor(Constants.Colors.textPrimary)
+                                .foregroundColor(Constants.Colors.textPrimary(preferences.isDarkMode))
                             
                             Text("Personalize your class names")
                                 .font(Constants.Fonts.caption)
-                                .foregroundColor(Constants.Colors.textSecondary)
+                                .foregroundColor(Constants.Colors.textSecondary(preferences.isDarkMode))
                         }
                         
                         Spacer()
                         
                         Image(systemName: "chevron.right")
                             .font(.caption)
-                            .foregroundColor(Constants.Colors.textSecondary)
+                            .foregroundColor(Constants.Colors.textSecondary(preferences.isDarkMode))
                     }
                 }
                 .padding(.horizontal, 16)
                 .padding(.vertical, 12)
             }
-            .background(Color.white)
+            .background(Constants.Colors.cardBackground(preferences.isDarkMode))
         }
-        .background(Color.white)
+        .background(Constants.Colors.cardBackground(preferences.isDarkMode))
     }
     
     // MARK: - Header View
@@ -135,7 +141,7 @@ struct ScheduleView: View {
         VStack(spacing: 4) {
             Text(scheduleViewModel.currentDateString)
                 .font(Constants.Fonts.headline)
-                .foregroundColor(Constants.Colors.primaryGreen)
+                .foregroundColor(preferences.isDarkMode ? Constants.Colors.textPrimary(preferences.isDarkMode) : Constants.Colors.primaryGreen(preferences.isDarkMode))
                 .fontWeight(.medium)
         }
     }
@@ -168,16 +174,16 @@ struct ScheduleView: View {
         VStack(spacing: 16) {
             Image(systemName: "calendar.badge.exclamationmark")
                 .font(.system(size: 60))
-                .foregroundColor(Constants.Colors.primaryGreen)
+                .foregroundColor(Constants.Colors.primaryGreen(preferences.isDarkMode))
             
             Text("No School Today")
                 .font(Constants.Fonts.largeTitle)
-                .foregroundColor(Constants.Colors.primaryGreen)
+                .foregroundColor(preferences.isDarkMode ? Constants.Colors.textPrimary(preferences.isDarkMode) : Constants.Colors.primaryGreen(preferences.isDarkMode))
                 .fontWeight(.bold)
             
             Text("Enjoy your weekend!")
                 .font(Constants.Fonts.body)
-                .foregroundColor(Constants.Colors.primaryGreen.opacity(0.8))
+                .foregroundColor(preferences.isDarkMode ? Constants.Colors.textSecondary(preferences.isDarkMode) : Constants.Colors.primaryGreen(preferences.isDarkMode).opacity(0.8))
         }
         .padding(.vertical, 40)
     }
@@ -186,34 +192,34 @@ struct ScheduleView: View {
         VStack(spacing: 20) {
             Image(systemName: "sunrise")
                 .font(.system(size: 50))
-                .foregroundColor(Constants.Colors.primaryGreen)
+                .foregroundColor(Constants.Colors.primaryGreen(preferences.isDarkMode))
             
             Text("School starts in")
                 .font(Constants.Fonts.headline)
-                .foregroundColor(Constants.Colors.primaryGreen.opacity(0.9))
+                .foregroundColor(preferences.isDarkMode ? Constants.Colors.textPrimary(preferences.isDarkMode) : Constants.Colors.primaryGreen(preferences.isDarkMode).opacity(0.9))
             
             Text(TimeFormatter.shared.formatCountdown(timeUntilNext))
                 .font(Constants.Fonts.countdown)
-                .foregroundColor(Constants.Colors.primaryGreen)
+                .foregroundColor(preferences.isDarkMode ? Constants.Colors.textPrimary(preferences.isDarkMode) : Constants.Colors.primaryGreen(preferences.isDarkMode))
                 .fontWeight(.bold)
                 .monospacedDigit()
             
             VStack(spacing: 4) {
                 Text("Next Period:")
                     .font(Constants.Fonts.body)
-                    .foregroundColor(Constants.Colors.primaryGreen.opacity(0.7))
+                    .foregroundColor(preferences.isDarkMode ? Constants.Colors.textSecondary(preferences.isDarkMode) : Constants.Colors.primaryGreen(preferences.isDarkMode).opacity(0.7))
                 
                 let nextClassInfo = preferences.getClassInfo(for: nextPeriod)
                 
                 Text(nextClassInfo.displayName)
                     .font(Constants.Fonts.title)
-                    .foregroundColor(Constants.Colors.primaryGreen)
+                    .foregroundColor(preferences.isDarkMode ? Constants.Colors.textPrimary(preferences.isDarkMode) : Constants.Colors.primaryGreen(preferences.isDarkMode))
                     .fontWeight(.semibold)
                 
                 if nextClassInfo.hasDetails {
                     Text(nextClassInfo.detailsText)
                         .font(Constants.Fonts.body)
-                        .foregroundColor(Constants.Colors.primaryGreen.opacity(0.7))
+                        .foregroundColor(Constants.Colors.primaryGreen(preferences.isDarkMode).opacity(0.7))
                 }
                 
                 Text(TimeFormatter.shared.formatTimeRange(
@@ -222,7 +228,7 @@ struct ScheduleView: View {
                     use24Hour: preferences.use24HourFormat
                 ))
                 .font(Constants.Fonts.body)
-                .foregroundColor(Constants.Colors.primaryGreen.opacity(0.8))
+                .foregroundColor(Constants.Colors.primaryGreen(preferences.isDarkMode).opacity(0.8))
             }
         }
         .padding(.vertical, 20)
@@ -236,14 +242,14 @@ struct ScheduleView: View {
                 
                 Text(classInfo.displayName)
                     .font(Constants.Fonts.largeTitle)
-                    .foregroundColor(Constants.Colors.primaryGreen)
+                    .foregroundColor(preferences.isDarkMode ? Constants.Colors.textPrimary(preferences.isDarkMode) : Constants.Colors.primaryGreen(preferences.isDarkMode))
                     .fontWeight(.bold)
                     .multilineTextAlignment(.center)
                 
                 if classInfo.hasDetails {
                     Text(classInfo.detailsText)
                         .font(Constants.Fonts.body)
-                        .foregroundColor(Constants.Colors.primaryGreen.opacity(0.8))
+                        .foregroundColor(preferences.isDarkMode ? Constants.Colors.textSecondary(preferences.isDarkMode) : Constants.Colors.primaryGreen(preferences.isDarkMode).opacity(0.8))
                         .multilineTextAlignment(.center)
                 }
             }
@@ -252,13 +258,13 @@ struct ScheduleView: View {
             ZStack {
                 // Background circle
                 Circle()
-                    .stroke(Constants.Colors.primaryGreen.opacity(0.3), lineWidth: 8)
+                    .stroke(Constants.Colors.primaryGreen(preferences.isDarkMode).opacity(0.3), lineWidth: 8)
                     .frame(width: 200, height: 200)
                 
                 // Progress circle
                 Circle()
                     .trim(from: 0, to: progress)
-                    .stroke(Constants.Colors.primaryGreen, style: StrokeStyle(lineWidth: 8, lineCap: .round))
+                    .stroke(Constants.Colors.primaryGreen(preferences.isDarkMode), style: StrokeStyle(lineWidth: 8, lineCap: .round))
                     .frame(width: 200, height: 200)
                     .rotationEffect(.degrees(-90))
                     .animation(Constants.Animation.smooth, value: progress)
@@ -267,13 +273,13 @@ struct ScheduleView: View {
                 VStack(spacing: 4) {
                     Text(TimeFormatter.shared.formatCountdown(timeRemaining))
                         .font(Constants.Fonts.countdown)
-                        .foregroundColor(Constants.Colors.primaryGreen)
+                        .foregroundColor(preferences.isDarkMode ? Constants.Colors.textPrimary(preferences.isDarkMode) : Constants.Colors.primaryGreen(preferences.isDarkMode))
                         .fontWeight(.bold)
                         .monospacedDigit()
                     
                     Text("remaining")
                         .font(Constants.Fonts.caption)
-                        .foregroundColor(Constants.Colors.primaryGreen.opacity(0.7))
+                        .foregroundColor(preferences.isDarkMode ? Constants.Colors.textSecondary(preferences.isDarkMode) : Constants.Colors.primaryGreen(preferences.isDarkMode).opacity(0.7))
                 }
             }
             
@@ -284,7 +290,7 @@ struct ScheduleView: View {
                 use24Hour: preferences.use24HourFormat
             ))
             .font(Constants.Fonts.headline)
-            .foregroundColor(Constants.Colors.primaryGreen.opacity(0.9))
+            .foregroundColor(preferences.isDarkMode ? Constants.Colors.textSecondary(preferences.isDarkMode) : Constants.Colors.primaryGreen(preferences.isDarkMode).opacity(0.9))
         }
     }
     
@@ -292,40 +298,40 @@ struct ScheduleView: View {
         VStack(spacing: 20) {
             Image(systemName: "figure.walk")
                 .font(.system(size: 50))
-                .foregroundColor(Constants.Colors.primaryGreen)
+                .foregroundColor(Constants.Colors.primaryGreen(preferences.isDarkMode))
             
             Text("Passing Period")
                 .font(Constants.Fonts.largeTitle)
-                .foregroundColor(Constants.Colors.primaryGreen)
+                .foregroundColor(preferences.isDarkMode ? Constants.Colors.textPrimary(preferences.isDarkMode) : Constants.Colors.primaryGreen(preferences.isDarkMode))
                 .fontWeight(.bold)
             
             Text("Next class in")
                 .font(Constants.Fonts.headline)
-                .foregroundColor(Constants.Colors.primaryGreen.opacity(0.9))
+                .foregroundColor(preferences.isDarkMode ? Constants.Colors.textPrimary(preferences.isDarkMode) : Constants.Colors.primaryGreen(preferences.isDarkMode).opacity(0.9))
             
             Text(TimeFormatter.shared.formatCountdown(timeUntilNext))
                 .font(Constants.Fonts.countdown)
-                .foregroundColor(Constants.Colors.primaryGreen)
+                .foregroundColor(preferences.isDarkMode ? Constants.Colors.textPrimary(preferences.isDarkMode) : Constants.Colors.primaryGreen(preferences.isDarkMode))
                 .fontWeight(.bold)
                 .monospacedDigit()
             
             VStack(spacing: 4) {
                 Text("Up Next:")
                     .font(Constants.Fonts.body)
-                    .foregroundColor(Constants.Colors.primaryGreen.opacity(0.7))
+                    .foregroundColor(preferences.isDarkMode ? Constants.Colors.textSecondary(preferences.isDarkMode) : Constants.Colors.primaryGreen(preferences.isDarkMode).opacity(0.7))
                 
                 let nextClassInfo = preferences.getClassInfo(for: nextPeriod)
                 
                 Text(nextClassInfo.displayName)
                     .font(Constants.Fonts.title)
-                    .foregroundColor(Constants.Colors.primaryGreen)
+                    .foregroundColor(preferences.isDarkMode ? Constants.Colors.textPrimary(preferences.isDarkMode) : Constants.Colors.primaryGreen(preferences.isDarkMode))
                     .fontWeight(.semibold)
                     .multilineTextAlignment(.center)
                 
                 if nextClassInfo.hasDetails {
                     Text(nextClassInfo.detailsText)
                         .font(Constants.Fonts.body)
-                        .foregroundColor(Constants.Colors.primaryGreen.opacity(0.7))
+                        .foregroundColor(preferences.isDarkMode ? Constants.Colors.textSecondary(preferences.isDarkMode) : Constants.Colors.primaryGreen(preferences.isDarkMode).opacity(0.7))
                         .multilineTextAlignment(.center)
                 }
             }
@@ -337,16 +343,16 @@ struct ScheduleView: View {
         VStack(spacing: 16) {
             Image(systemName: "sunset")
                 .font(.system(size: 60))
-                .foregroundColor(Constants.Colors.primaryGreen)
+                .foregroundColor(Constants.Colors.primaryGreen(preferences.isDarkMode))
             
             Text("School's Out!")
                 .font(Constants.Fonts.largeTitle)
-                .foregroundColor(Constants.Colors.primaryGreen)
+                .foregroundColor(preferences.isDarkMode ? Constants.Colors.textPrimary(preferences.isDarkMode) : Constants.Colors.primaryGreen(preferences.isDarkMode))
                 .fontWeight(.bold)
             
             Text("Have a great rest of your day!")
                 .font(Constants.Fonts.body)
-                .foregroundColor(Constants.Colors.primaryGreen.opacity(0.8))
+                .foregroundColor(preferences.isDarkMode ? Constants.Colors.textSecondary(preferences.isDarkMode) : Constants.Colors.primaryGreen(preferences.isDarkMode).opacity(0.8))
                 .multilineTextAlignment(.center)
         }
         .padding(.vertical, 40)
@@ -360,7 +366,7 @@ struct ScheduleView: View {
             VStack(alignment: .leading, spacing: 12) {
                 Text("Upcoming Classes")
                     .font(Constants.Fonts.headline)
-                    .foregroundColor(Constants.Colors.primaryGreen)
+                    .foregroundColor(Constants.Colors.primaryGreen(preferences.isDarkMode))
                     .fontWeight(.semibold)
                     .padding(.horizontal, 16)
                     .padding(.top, 16)
@@ -375,7 +381,7 @@ struct ScheduleView: View {
             }
             .background(
                 RoundedRectangle(cornerRadius: Constants.Layout.cornerRadius)
-                    .fill(Constants.Colors.primaryGreen.opacity(0.15))
+                    .fill(Constants.Colors.primaryGreen(preferences.isDarkMode).opacity(0.15))
             )
         }
     }
@@ -387,32 +393,32 @@ struct ScheduleView: View {
                 
                 Text(classInfo.displayName)
                     .font(Constants.Fonts.body)
-                    .foregroundColor(Constants.Colors.primaryGreen)
+                    .foregroundColor(preferences.isDarkMode ? Constants.Colors.textPrimary(preferences.isDarkMode) : Constants.Colors.primaryGreen(preferences.isDarkMode))
                     .fontWeight(.medium)
                 
                 if classInfo.hasDetails {
                     Text(classInfo.detailsText)
                         .font(Constants.Fonts.caption)
-                        .foregroundColor(Constants.Colors.primaryGreen.opacity(0.6))
+                        .foregroundColor(preferences.isDarkMode ? Constants.Colors.textSecondary(preferences.isDarkMode) : Constants.Colors.primaryGreen(preferences.isDarkMode).opacity(0.6))
                 }
                 
                 Text(period.displayName)
                     .font(Constants.Fonts.caption)
-                    .foregroundColor(Constants.Colors.primaryGreen.opacity(0.7))
+                    .foregroundColor(preferences.isDarkMode ? Constants.Colors.textSecondary(preferences.isDarkMode) : Constants.Colors.primaryGreen(preferences.isDarkMode).opacity(0.7))
             }
             
             Spacer()
             
             Text(TimeFormatter.shared.formatTime(period.startDate, use24Hour: preferences.use24HourFormat))
                 .font(Constants.Fonts.body)
-                .foregroundColor(Constants.Colors.primaryGreen.opacity(0.9))
+                .foregroundColor(preferences.isDarkMode ? Constants.Colors.textPrimary(preferences.isDarkMode) : Constants.Colors.primaryGreen(preferences.isDarkMode).opacity(0.9))
                 .fontWeight(.medium)
         }
         .padding(.horizontal, 12)
         .padding(.vertical, 8)
         .background(
             RoundedRectangle(cornerRadius: 8)
-                .fill(Constants.Colors.primaryGreen.opacity(0.1))
+                .fill(Constants.Colors.primaryGreen(preferences.isDarkMode).opacity(0.1))
         )
     }
 }

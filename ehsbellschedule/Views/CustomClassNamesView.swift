@@ -18,8 +18,12 @@ struct CustomClassNamesView: View {
             List {
                 ForEach(allPeriods, id: \.number) { period in
                     periodRow(for: period)
+                        .listRowBackground(Constants.Colors.cardBackground(preferences.isDarkMode))
                 }
             }
+            .listStyle(.insetGrouped)
+            .scrollContentBackground(.hidden)
+            .background(Constants.Colors.backgroundGray(preferences.isDarkMode))
             .onAppear {
                 // Always initialize on appear to ensure fresh data
                 initializeEditingInfo()
@@ -43,12 +47,14 @@ struct CustomClassNamesView: View {
                 }
             }
         }
+        .background(Constants.Colors.backgroundGray(preferences.isDarkMode))
         .onReceive(preferences.$showPeriod0.combineLatest(preferences.$showPeriod7)) { _, _ in
             // Reinitialize when period visibility settings change
             DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
                 initializeEditingInfo()
             }
         }
+        .id(preferences.isDarkMode) // Force refresh when dark mode changes
     }
     
     private var allPeriods: [Period] {
@@ -66,7 +72,7 @@ struct CustomClassNamesView: View {
                 VStack(alignment: .leading, spacing: 2) {
                     Text(period.displayName)
                         .font(Constants.Fonts.headline)
-                        .foregroundColor(Constants.Colors.textPrimary)
+                        .foregroundColor(Constants.Colors.textPrimary(preferences.isDarkMode))
                     
                     Text(TimeFormatter.shared.formatTimeRange(
                         start: period.startDate,
@@ -75,7 +81,7 @@ struct CustomClassNamesView: View {
                     ))
                     .id("time-\(period.number)-\(preferences.use24HourFormat)")
                     .font(Constants.Fonts.caption)
-                    .foregroundColor(Constants.Colors.textSecondary)
+                    .foregroundColor(Constants.Colors.textSecondary(preferences.isDarkMode))
                 }
                 
                 Spacer()
@@ -88,7 +94,7 @@ struct CustomClassNamesView: View {
                     .frame(width: 28, height: 28)
                     .background(
                         Circle()
-                            .fill(Constants.Colors.primaryGreen)
+                            .fill(Constants.Colors.primaryGreen(preferences.isDarkMode))
                     )
             }
             
@@ -98,7 +104,7 @@ struct CustomClassNamesView: View {
                 VStack(alignment: .leading, spacing: 4) {
                     Text("Class Name")
                         .font(Constants.Fonts.caption)
-                        .foregroundColor(Constants.Colors.textSecondary)
+                        .foregroundColor(Constants.Colors.textSecondary(preferences.isDarkMode))
                     
                     TextField(period.defaultName, text: classNameBinding(for: period.number))
                         .textFieldStyle(.roundedBorder)
@@ -109,7 +115,7 @@ struct CustomClassNamesView: View {
                 VStack(alignment: .leading, spacing: 4) {
                     Text("Teacher")
                         .font(Constants.Fonts.caption)
-                        .foregroundColor(Constants.Colors.textSecondary)
+                        .foregroundColor(Constants.Colors.textSecondary(preferences.isDarkMode))
                     
                     TextField("Enter teacher name", text: teacherBinding(for: period.number))
                         .textFieldStyle(.roundedBorder)
@@ -120,7 +126,7 @@ struct CustomClassNamesView: View {
                 VStack(alignment: .leading, spacing: 4) {
                     Text("Room Number")
                         .font(Constants.Fonts.caption)
-                        .foregroundColor(Constants.Colors.textSecondary)
+                        .foregroundColor(Constants.Colors.textSecondary(preferences.isDarkMode))
                     
                     TextField("Enter room number", text: roomBinding(for: period.number))
                         .textFieldStyle(.roundedBorder)
@@ -140,7 +146,7 @@ struct CustomClassNamesView: View {
                         Text("Reset to default")
                             .font(Constants.Fonts.caption)
                     }
-                    .foregroundColor(Constants.Colors.primaryGreen)
+                    .foregroundColor(Constants.Colors.primaryGreen(preferences.isDarkMode))
                 }
             }
         }

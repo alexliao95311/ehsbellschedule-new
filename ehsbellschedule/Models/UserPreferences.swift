@@ -92,6 +92,12 @@ class UserPreferences: ObservableObject {
         }
     }
     
+    @Published var isDarkMode: Bool {
+        didSet {
+            UserDefaults.standard.set(isDarkMode, forKey: "isDarkMode")
+        }
+    }
+    
     private init() {
         self.use24HourFormat = UserDefaults.standard.bool(forKey: "use24HourFormat")
         self.showPeriod0 = UserDefaults.standard.object(forKey: "showPeriod0") as? Bool ?? true
@@ -99,6 +105,7 @@ class UserPreferences: ObservableObject {
         self.notificationMinutesBefore = UserDefaults.standard.object(forKey: "notificationMinutesBefore") as? Int ?? 2
         self.enablePassingPeriodNotifications = UserDefaults.standard.bool(forKey: "enablePassingPeriodNotifications")
         self.backgroundImageName = UserDefaults.standard.string(forKey: "backgroundImageName")
+        self.isDarkMode = UserDefaults.standard.bool(forKey: "isDarkMode")
         
         if let data = UserDefaults.standard.data(forKey: "customClassNames"),
            let names = try? JSONDecoder().decode([Int: String].self, from: data) {
@@ -197,5 +204,6 @@ class UserPreferences: ObservableObject {
         notificationMinutesBefore = 2
         enablePassingPeriodNotifications = false
         backgroundImageName = nil
+        isDarkMode = false
     }
 }

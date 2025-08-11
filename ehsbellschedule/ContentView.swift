@@ -36,8 +36,8 @@ struct ContentView: View {
                 }
                 .tag(2)
         }
-        .preferredColorScheme(.light)
-        .tint(Constants.Colors.primaryGreen)
+        .preferredColorScheme(preferences.isDarkMode ? .dark : .light)
+        .tint(Constants.Colors.primaryGreen(preferences.isDarkMode))
         .onAppear {
             print("🚀 ContentView appeared - Main app is running!")
             setupInitialState()
@@ -54,6 +54,11 @@ struct ContentView: View {
             print("Tab changed to: \(newValue)")
             updateTabBarAppearance()
         }
+        .onChange(of: preferences.isDarkMode) { _ in
+            print("Dark mode changed, updating tab bar appearance")
+            updateTabBarAppearance()
+        }
+        .id(preferences.isDarkMode) // Force refresh when dark mode changes
     }
     
     private func setupInitialState() {
@@ -155,21 +160,37 @@ struct ContentView: View {
         print("Updating tab bar appearance for tab: \(selectedTab)")
         let appearance = UITabBarAppearance()
         
-        // All tabs now use white background with black text/icons (like Settings)
+        // Configure appearance based on dark mode
         appearance.configureWithOpaqueBackground()
-        appearance.backgroundColor = UIColor.white
-        
-        // Configure normal state (unselected) - dark gray
-        appearance.stackedLayoutAppearance.normal.iconColor = UIColor.black.withAlphaComponent(0.6)
-        appearance.stackedLayoutAppearance.normal.titleTextAttributes = [
-            .foregroundColor: UIColor.black.withAlphaComponent(0.6)
-        ]
-        
-        // Configure selected state - black for active state
-        appearance.stackedLayoutAppearance.selected.iconColor = UIColor.black
-        appearance.stackedLayoutAppearance.selected.titleTextAttributes = [
-            .foregroundColor: UIColor.black
-        ]
+        if preferences.isDarkMode {
+            appearance.backgroundColor = UIColor(Constants.Colors.darkCardBackground)
+            
+            // Configure normal state (unselected) - light gray for dark mode
+            appearance.stackedLayoutAppearance.normal.iconColor = UIColor(Constants.Colors.darkTextSecondary)
+            appearance.stackedLayoutAppearance.normal.titleTextAttributes = [
+                .foregroundColor: UIColor(Constants.Colors.darkTextSecondary)
+            ]
+            
+            // Configure selected state - bright green for dark mode
+            appearance.stackedLayoutAppearance.selected.iconColor = UIColor(Constants.Colors.darkPrimaryGreen)
+            appearance.stackedLayoutAppearance.selected.titleTextAttributes = [
+                .foregroundColor: UIColor(Constants.Colors.darkPrimaryGreen)
+            ]
+        } else {
+            appearance.backgroundColor = UIColor(Constants.Colors.lightCardBackground)
+            
+            // Configure normal state (unselected) - dark gray for light mode
+            appearance.stackedLayoutAppearance.normal.iconColor = UIColor(Constants.Colors.lightTextSecondary)
+            appearance.stackedLayoutAppearance.normal.titleTextAttributes = [
+                .foregroundColor: UIColor(Constants.Colors.lightTextSecondary)
+            ]
+            
+            // Configure selected state - dark green for light mode
+            appearance.stackedLayoutAppearance.selected.iconColor = UIColor(Constants.Colors.lightPrimaryGreen)
+            appearance.stackedLayoutAppearance.selected.titleTextAttributes = [
+                .foregroundColor: UIColor(Constants.Colors.lightPrimaryGreen)
+            ]
+        }
         
         // Apply appearance globally
         UITabBar.appearance().standardAppearance = appearance

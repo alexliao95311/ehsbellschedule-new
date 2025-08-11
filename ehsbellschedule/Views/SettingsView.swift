@@ -21,9 +21,14 @@ struct SettingsView: View {
                 notificationSettingsSection
                 aboutSection
             }
+            .listSectionSeparatorTint(Constants.Colors.textSecondary(preferences.isDarkMode))
             .navigationTitle("Settings")
             .navigationBarTitleDisplayMode(.large)
+            .listStyle(.insetGrouped)
+            .scrollContentBackground(.hidden)
+            .background(Constants.Colors.backgroundGray(preferences.isDarkMode))
         }
+        .background(Constants.Colors.backgroundGray(preferences.isDarkMode))
         .navigationViewStyle(.stack)
         .sheet(isPresented: $showingCustomClassNames) {
             CustomClassNamesView()
@@ -51,6 +56,7 @@ struct SettingsView: View {
         } message: {
             Text(testResultMessage)
         }
+        .id(preferences.isDarkMode) // Force refresh when dark mode changes
     }
     
     // MARK: - Customization Section (moved to top - most important)
@@ -62,53 +68,77 @@ struct SettingsView: View {
             }) {
                 HStack {
                     Image(systemName: "pencil")
-                        .foregroundColor(Constants.Colors.primaryGreen)
+                        .foregroundColor(Constants.Colors.primaryGreen(preferences.isDarkMode))
                         .frame(width: 24)
                     
                     VStack(alignment: .leading, spacing: 2) {
                         Text("Custom Class Names")
                             .font(Constants.Fonts.body)
-                            .foregroundColor(Constants.Colors.textPrimary)
+                            .foregroundColor(Constants.Colors.textPrimary(preferences.isDarkMode))
                         
                         Text("Personalize your class names")
                             .font(Constants.Fonts.caption)
-                            .foregroundColor(Constants.Colors.textSecondary)
+                            .foregroundColor(Constants.Colors.textSecondary(preferences.isDarkMode))
                     }
                     
                     Spacer()
                     
                     Image(systemName: "chevron.right")
                         .font(.caption)
-                        .foregroundColor(Constants.Colors.textSecondary)
+                        .foregroundColor(Constants.Colors.textSecondary(preferences.isDarkMode))
                 }
             }
         }
+        .listRowBackground(Constants.Colors.cardBackground(preferences.isDarkMode))
     }
     
     // MARK: - Display Settings Section
     
     private var displaySettingsSection: some View {
         Section("Display") {
+            Toggle("Dark Mode", isOn: $preferences.isDarkMode)
+                .tint(Constants.Colors.primaryGreen(preferences.isDarkMode))
+            
+            HStack {
+                Image(systemName: preferences.isDarkMode ? "moon.fill" : "sun.max.fill")
+                    .foregroundColor(Constants.Colors.primaryGreen(preferences.isDarkMode))
+                    .frame(width: 24)
+                
+                VStack(alignment: .leading, spacing: 2) {
+                    Text("Theme")
+                        .font(Constants.Fonts.body)
+                        .foregroundColor(Constants.Colors.textPrimary(preferences.isDarkMode))
+                    
+                    Text(preferences.isDarkMode ? "Dark theme with green accents" : "Light theme with green accents")
+                        .font(Constants.Fonts.caption)
+                        .foregroundColor(Constants.Colors.textSecondary(preferences.isDarkMode))
+                }
+                
+                Spacer()
+            }
+            
             Toggle("24-Hour Time Format", isOn: $preferences.use24HourFormat)
-                .tint(Constants.Colors.primaryGreen)
+                .tint(Constants.Colors.primaryGreen(preferences.isDarkMode))
             
             HStack {
                 Image(systemName: "clock")
-                    .foregroundColor(Constants.Colors.primaryGreen)
+                    .foregroundColor(Constants.Colors.primaryGreen(preferences.isDarkMode))
                     .frame(width: 24)
                 
                 VStack(alignment: .leading, spacing: 2) {
                     Text("Time Format")
                         .font(Constants.Fonts.body)
+                        .foregroundColor(Constants.Colors.textPrimary(preferences.isDarkMode))
                     
                     Text(preferences.use24HourFormat ? "15:30" : "3:30 PM")
                         .font(Constants.Fonts.caption)
-                        .foregroundColor(Constants.Colors.textSecondary)
+                        .foregroundColor(Constants.Colors.textSecondary(preferences.isDarkMode))
                 }
                 
                 Spacer()
             }
         }
+        .listRowBackground(Constants.Colors.cardBackground(preferences.isDarkMode))
     }
     
     // MARK: - Schedule Settings Section
@@ -116,28 +146,30 @@ struct SettingsView: View {
     private var scheduleSettingsSection: some View {
         Section("Schedule") {
             Toggle("Show Period 0", isOn: $preferences.showPeriod0)
-                .tint(Constants.Colors.primaryGreen)
+                .tint(Constants.Colors.primaryGreen(preferences.isDarkMode))
             
             Toggle("Show Period 7", isOn: $preferences.showPeriod7)
-                .tint(Constants.Colors.primaryGreen)
+                .tint(Constants.Colors.primaryGreen(preferences.isDarkMode))
             
             HStack {
                 Image(systemName: "info.circle")
-                    .foregroundColor(Constants.Colors.primaryGreen)
+                    .foregroundColor(Constants.Colors.primaryGreen(preferences.isDarkMode))
                     .frame(width: 24)
                 
                 VStack(alignment: .leading, spacing: 2) {
                     Text("Visible Periods")
                         .font(Constants.Fonts.body)
+                        .foregroundColor(Constants.Colors.textPrimary(preferences.isDarkMode))
                     
                     Text("Choose which periods appear in your schedule")
                         .font(Constants.Fonts.caption)
-                        .foregroundColor(Constants.Colors.textSecondary)
+                        .foregroundColor(Constants.Colors.textSecondary(preferences.isDarkMode))
                 }
                 
                 Spacer()
             }
         }
+        .listRowBackground(Constants.Colors.cardBackground(preferences.isDarkMode))
     }
     
     // MARK: - Notification Settings Section
@@ -157,16 +189,17 @@ struct SettingsView: View {
     private var notificationToggleRow: some View {
         HStack {
             Image(systemName: notificationService.isAuthorized ? "bell.fill" : "bell.slash")
-                .foregroundColor(notificationService.isAuthorized ? Constants.Colors.primaryBlue : Constants.Colors.textSecondary)
+                .foregroundColor(notificationService.isAuthorized ? Constants.Colors.primaryGreen(preferences.isDarkMode) : Constants.Colors.textSecondary(preferences.isDarkMode))
                 .frame(width: 24)
             
             VStack(alignment: .leading, spacing: 2) {
                 Text("Class Ending Notifications")
                     .font(Constants.Fonts.body)
+                    .foregroundColor(Constants.Colors.textPrimary(preferences.isDarkMode))
                 
                 Text(notificationService.isAuthorized ? "Enabled" : "Disabled")
                     .font(Constants.Fonts.caption)
-                    .foregroundColor(notificationService.isAuthorized ? Constants.Colors.success : Constants.Colors.textSecondary)
+                    .foregroundColor(notificationService.isAuthorized ? Constants.Colors.success : Constants.Colors.textSecondary(preferences.isDarkMode))
             }
             
             Spacer()
@@ -181,7 +214,7 @@ struct SettingsView: View {
                     }
                 }
                 .buttonStyle(.bordered)
-                .tint(Constants.Colors.primaryGreen)
+                .tint(Constants.Colors.primaryGreen(preferences.isDarkMode))
             }
         }
     }
@@ -189,16 +222,17 @@ struct SettingsView: View {
     private var notificationTimingRow: some View {
         HStack {
             Image(systemName: "timer")
-                .foregroundColor(Constants.Colors.primaryBlue)
+                .foregroundColor(Constants.Colors.primaryGreen(preferences.isDarkMode))
                 .frame(width: 24)
             
             VStack(alignment: .leading, spacing: 2) {
                 Text("Notification Timing")
                     .font(Constants.Fonts.body)
+                    .foregroundColor(Constants.Colors.textPrimary(preferences.isDarkMode))
                 
                 Text("\(preferences.notificationMinutesBefore) minute\(preferences.notificationMinutesBefore == 1 ? "" : "s") before class ends")
                     .font(Constants.Fonts.caption)
-                    .foregroundColor(Constants.Colors.textSecondary)
+                    .foregroundColor(Constants.Colors.textSecondary(preferences.isDarkMode))
             }
             
             Spacer()
@@ -209,13 +243,13 @@ struct SettingsView: View {
                 }
             }
             .pickerStyle(.menu)
-            .tint(Constants.Colors.primaryBlue)
+            .tint(Constants.Colors.primaryGreen(preferences.isDarkMode))
         }
     }
     
     private var passingPeriodToggleRow: some View {
         Toggle("Passing Period Notifications", isOn: $preferences.enablePassingPeriodNotifications)
-            .tint(Constants.Colors.primaryBlue)
+            .tint(Constants.Colors.primaryGreen(preferences.isDarkMode))
     }
     
     private var testNotificationRow: some View {
@@ -247,23 +281,24 @@ struct SettingsView: View {
         }) {
             HStack {
                 Image(systemName: testNotificationSent ? "checkmark.circle.fill" : "bell.badge")
-                    .foregroundColor(testNotificationSent ? Constants.Colors.success : Constants.Colors.primaryBlue)
+                    .foregroundColor(testNotificationSent ? Constants.Colors.success : Constants.Colors.primaryGreen(preferences.isDarkMode))
                     .frame(width: 24)
                 
                 VStack(alignment: .leading, spacing: 2) {
                     Text("Test Notification")
                         .font(Constants.Fonts.body)
-                        .foregroundColor(Constants.Colors.textPrimary)
+                        .foregroundColor(Constants.Colors.textPrimary(preferences.isDarkMode))
                     
                     Text(testNotificationSent ? "Test notification sent!" : "Send a test notification")
                         .font(Constants.Fonts.caption)
-                        .foregroundColor(testNotificationSent ? Constants.Colors.success : Constants.Colors.textSecondary)
+                        .foregroundColor(testNotificationSent ? Constants.Colors.success : Constants.Colors.textSecondary(preferences.isDarkMode))
                 }
                 
                 Spacer()
             }
         }
         .disabled(testNotificationSent)
+        .listRowBackground(Constants.Colors.cardBackground(preferences.isDarkMode))
     }
     
     // MARK: - About Section
@@ -272,16 +307,17 @@ struct SettingsView: View {
         Section("About") {
             HStack {
                 Image(systemName: "info.circle")
-                    .foregroundColor(Constants.Colors.primaryGreen)
+                    .foregroundColor(Constants.Colors.primaryGreen(preferences.isDarkMode))
                     .frame(width: 24)
                 
                 VStack(alignment: .leading, spacing: 2) {
                     Text("EHS Schedule")
                         .font(Constants.Fonts.body)
+                        .foregroundColor(Constants.Colors.textPrimary(preferences.isDarkMode))
                     
                     Text("Version \(Bundle.main.infoDictionary?["CFBundleShortVersionString"] as! String)")
                         .font(Constants.Fonts.caption)
-                        .foregroundColor(Constants.Colors.textSecondary)
+                        .foregroundColor(Constants.Colors.textSecondary(preferences.isDarkMode))
                 }
                 
                 Spacer()
@@ -289,16 +325,17 @@ struct SettingsView: View {
             
             HStack {
                 Image(systemName: "c.circle")
-                    .foregroundColor(Constants.Colors.primaryGreen)
+                    .foregroundColor(Constants.Colors.primaryGreen(preferences.isDarkMode))
                     .frame(width: 24)
                 
                 VStack(alignment: .leading, spacing: 2) {
                     Text("Copyright © 2025 EHS Schedule Team")
                         .font(Constants.Fonts.body)
+                        .foregroundColor(Constants.Colors.textPrimary(preferences.isDarkMode))
                     
                     Text("Made by Justin Fu, Alex Liao, Arnav Kakani, Sanjana Gowda, and Shely Jain")
                         .font(Constants.Fonts.caption)
-                        .foregroundColor(Constants.Colors.textSecondary)
+                        .foregroundColor(Constants.Colors.textSecondary(preferences.isDarkMode))
                 }
                 
                 Spacer()
@@ -308,6 +345,7 @@ struct SettingsView: View {
                 showingResetAlert = true
             }
         }
+        .listRowBackground(Constants.Colors.cardBackground(preferences.isDarkMode))
     }
     
     // MARK: - Helper Methods
