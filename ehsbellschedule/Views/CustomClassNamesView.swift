@@ -62,7 +62,7 @@ struct CustomClassNamesView: View {
         return schedule.filteredPeriods(
             showPeriod0: preferences.showPeriod0,
             showPeriod7: preferences.showPeriod7
-        ).filter { $0.number != 99 } // Exclude ACCESS period (99) from editing
+        ).filter { $0.number != 99 && $0.number != 98 } // Exclude ACCESS (99) and LUNCH (98) periods from editing
     }
     
     private func periodRow(for period: Period) -> some View {

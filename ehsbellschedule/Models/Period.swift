@@ -14,6 +14,8 @@ struct Period: Identifiable, Codable, Equatable {
     var displayName: String {
         if number == 99 {
             return "ACCESS"
+        } else if number == 98 {
+            return "Lunch"
         } else {
             return "Period \(number)"
         }

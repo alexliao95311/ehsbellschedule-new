@@ -98,7 +98,7 @@ struct InformationView: View {
     }
     
     private func periodNumberBadge(_ number: Int) -> some View {
-        Text("\(number == 99 ? "A" : String(number))")
+        Text("\(number == 99 ? "A" : number == 98 ? "L" : String(number))")
             .font(Constants.Fonts.headline)
             .fontWeight(.bold)
             .foregroundColor(.white)

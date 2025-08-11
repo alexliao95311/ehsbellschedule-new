@@ -47,6 +47,7 @@ struct Schedule: Identifiable, Codable {
             Period(number: 2, startHour: 9, startMinute: 28, endHour: 10, endMinute: 20, defaultName: "Period 2"),
             Period(number: 3, startHour: 10, startMinute: 26, endHour: 11, endMinute: 18, defaultName: "Period 3"),
             Period(number: 4, startHour: 11, startMinute: 24, endHour: 12, endMinute: 16, defaultName: "Period 4"),
+            Period(number: 98, startHour: 12, startMinute: 16, endHour: 12, endMinute: 51, defaultName: "Lunch"),
             Period(number: 99, startHour: 12, startMinute: 57, endHour: 13, endMinute: 29, defaultName: "ACCESS Period"),
             Period(number: 5, startHour: 13, startMinute: 35, endHour: 14, endMinute: 27, defaultName: "Period 5"),
             Period(number: 6, startHour: 14, startMinute: 33, endHour: 15, endMinute: 25, defaultName: "Period 6"),
@@ -62,6 +63,7 @@ struct Schedule: Identifiable, Codable {
             Period(number: 2, startHour: 9, startMinute: 34, endHour: 10, endMinute: 32, defaultName: "Period 2"),
             Period(number: 3, startHour: 10, startMinute: 38, endHour: 11, endMinute: 38, defaultName: "Period 3"),
             Period(number: 4, startHour: 11, startMinute: 44, endHour: 12, endMinute: 42, defaultName: "Period 4"),
+            Period(number: 98, startHour: 12, startMinute: 42, endHour: 13, endMinute: 17, defaultName: "Lunch"),
             Period(number: 5, startHour: 13, startMinute: 23, endHour: 14, endMinute: 21, defaultName: "Period 5"),
             Period(number: 6, startHour: 14, startMinute: 27, endHour: 15, endMinute: 25, defaultName: "Period 6"),
             Period(number: 7, startHour: 15, startMinute: 31, endHour: 16, endMinute: 36, defaultName: "Period 7")
@@ -73,6 +75,7 @@ struct Schedule: Identifiable, Codable {
         periods: [
             Period(number: 1, startHour: 9, startMinute: 0, endHour: 10, endMinute: 30, defaultName: "Period 1"),
             Period(number: 3, startHour: 10, startMinute: 36, endHour: 12, endMinute: 6, defaultName: "Period 3"),
+            Period(number: 98, startHour: 12, startMinute: 6, endHour: 12, endMinute: 41, defaultName: "Lunch"),
             Period(number: 99, startHour: 12, startMinute: 47, endHour: 13, endMinute: 49, defaultName: "ACCESS Period"),
             Period(number: 5, startHour: 13, startMinute: 55, endHour: 15, endMinute: 25, defaultName: "Period 5")
         ]
@@ -84,6 +87,7 @@ struct Schedule: Identifiable, Codable {
             Period(number: 0, startHour: 7, startMinute: 15, endHour: 8, endMinute: 20, defaultName: "Period 0"),
             Period(number: 2, startHour: 8, startMinute: 30, endHour: 10, endMinute: 0, defaultName: "Period 2"),
             Period(number: 4, startHour: 10, startMinute: 6, endHour: 11, endMinute: 36, defaultName: "Period 4"),
+            Period(number: 98, startHour: 11, startMinute: 36, endHour: 12, endMinute: 11, defaultName: "Lunch"),
             Period(number: 99, startHour: 12, startMinute: 17, endHour: 13, endMinute: 9, defaultName: "ACCESS Period"),
             Period(number: 6, startHour: 13, startMinute: 15, endHour: 14, endMinute: 45, defaultName: "Period 6"),
             Period(number: 7, startHour: 14, startMinute: 51, endHour: 15, endMinute: 56, defaultName: "Period 7")
@@ -98,6 +102,7 @@ struct Schedule: Identifiable, Codable {
             Period(number: 2, startHour: 9, startMinute: 34, endHour: 10, endMinute: 32, defaultName: "Period 2"),
             Period(number: 3, startHour: 10, startMinute: 38, endHour: 11, endMinute: 38, defaultName: "Period 3"),
             Period(number: 4, startHour: 11, startMinute: 44, endHour: 12, endMinute: 42, defaultName: "Period 4"),
+            Period(number: 98, startHour: 12, startMinute: 42, endHour: 13, endMinute: 17, defaultName: "Lunch"),
             Period(number: 5, startHour: 13, startMinute: 23, endHour: 14, endMinute: 21, defaultName: "Period 5"),
             Period(number: 6, startHour: 14, startMinute: 27, endHour: 15, endMinute: 25, defaultName: "Period 6"),
             Period(number: 7, startHour: 15, startMinute: 31, endHour: 16, endMinute: 36, defaultName: "Period 7")

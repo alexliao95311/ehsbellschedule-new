@@ -123,9 +123,12 @@ class UserPreferences: ObservableObject {
     }
     
     func getClassName(for period: Period) -> String {
-        // ACCESS period (99) should not be customizable
+        // ACCESS period (99) and LUNCH period (98) should not be customizable
         if period.number == 99 {
             return "ACCESS"
+        }
+        if period.number == 98 {
+            return "Lunch"
         }
         
         // First check new ClassInfo structure
@@ -137,9 +140,12 @@ class UserPreferences: ObservableObject {
     }
     
     func getClassInfo(for period: Period) -> ClassInfo {
-        // ACCESS period (99) should not be customizable
+        // ACCESS period (99) and LUNCH period (98) should not be customizable
         if period.number == 99 {
             return ClassInfo(name: "ACCESS")
+        }
+        if period.number == 98 {
+            return ClassInfo(name: "Lunch")
         }
         
         // First check new ClassInfo structure
@@ -157,8 +163,8 @@ class UserPreferences: ObservableObject {
     }
     
     func setClassInfo(_ info: ClassInfo, for periodNumber: Int) {
-        // ACCESS period (99) should not be customizable
-        if periodNumber == 99 {
+        // ACCESS period (99) and LUNCH period (98) should not be customizable
+        if periodNumber == 99 || periodNumber == 98 {
             return
         }
         
@@ -170,8 +176,8 @@ class UserPreferences: ObservableObject {
     }
     
     func setClassName(_ name: String, for periodNumber: Int) {
-        // ACCESS period (99) should not be customizable
-        if periodNumber == 99 {
+        // ACCESS period (99) and LUNCH period (98) should not be customizable
+        if periodNumber == 99 || periodNumber == 98 {
             return
         }
         customClassNames[periodNumber] = name.isEmpty ? nil : name
