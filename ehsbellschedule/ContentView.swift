@@ -36,6 +36,7 @@ struct ContentView: View {
                 }
                 .tag(2)
         }
+        .preferredColorScheme(.light)
         .tint(Constants.Colors.primaryGreen)
         .onAppear {
             print("🚀 ContentView appeared - Main app is running!")

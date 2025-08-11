@@ -24,6 +24,7 @@ struct InformationView: View {
             .navigationBarTitleDisplayMode(.large)
             .background(Constants.Colors.backgroundGray.ignoresSafeArea())
         }
+        .navigationViewStyle(.stack)
     }
     
     // MARK: - Schedule Type Selector
@@ -96,7 +97,7 @@ struct InformationView: View {
     }
     
     private func periodNumberBadge(_ number: Int) -> some View {
-        Text("\(number)")
+        Text("\(number == 99 ? "A" : String(number))")
             .font(Constants.Fonts.headline)
             .fontWeight(.bold)
             .foregroundColor(.white)

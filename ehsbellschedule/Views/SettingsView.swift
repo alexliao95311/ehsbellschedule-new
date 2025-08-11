@@ -24,6 +24,7 @@ struct SettingsView: View {
             .navigationTitle("Settings")
             .navigationBarTitleDisplayMode(.large)
         }
+        .navigationViewStyle(.stack)
         .sheet(isPresented: $showingCustomClassNames) {
             CustomClassNamesView()
         }
@@ -278,7 +279,24 @@ struct SettingsView: View {
                     Text("EHS Schedule")
                         .font(Constants.Fonts.body)
                     
-                    Text("Version 1.0.0")
+                    Text("Version \(Bundle.main.infoDictionary?["CFBundleShortVersionString"] as! String)")
+                        .font(Constants.Fonts.caption)
+                        .foregroundColor(Constants.Colors.textSecondary)
+                }
+                
+                Spacer()
+            }
+            
+            HStack {
+                Image(systemName: "c.circle")
+                    .foregroundColor(Constants.Colors.primaryGreen)
+                    .frame(width: 24)
+                
+                VStack(alignment: .leading, spacing: 2) {
+                    Text("Copyright © 2025 EHS Schedule Team")
+                        .font(Constants.Fonts.body)
+                    
+                    Text("Made by Justin Fu, Alex Liao, Arnav Kakani, Sanjana Gowda, and Shely Jain")
                         .font(Constants.Fonts.caption)
                         .foregroundColor(Constants.Colors.textSecondary)
                 }

@@ -25,6 +25,7 @@ struct ScheduleView: View {
                 footerView
             }
         }
+        .navigationViewStyle(.stack)
         .sheet(isPresented: $showingCustomClassNames) {
             NavigationView {
                 VStack {
