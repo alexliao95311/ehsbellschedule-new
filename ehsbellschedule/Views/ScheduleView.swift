@@ -2,7 +2,7 @@ import SwiftUI
 
 struct ScheduleView: View {
     @StateObject private var scheduleViewModel = ScheduleViewModel()
-    @StateObject private var preferences = UserPreferences()
+    @ObservedObject private var preferences = UserPreferences.shared
     
     var body: some View {
         ZStack {
@@ -18,7 +18,7 @@ struct ScheduleView: View {
                 upcomingPeriodsView
             }
             .padding(.horizontal, Constants.Layout.padding)
-            .padding(.top, 20)
+            .padding(.top, 60)
         }
         .onAppear {
             scheduleViewModel.startTimer()
@@ -54,25 +54,11 @@ struct ScheduleView: View {
     // MARK: - Header View
     
     private var headerView: some View {
-        VStack(spacing: 8) {
-            HStack(spacing: 8) {
-                Text(scheduleViewModel.currentScheduleType)
-                    .font(Constants.Fonts.headline)
-                    .foregroundColor(.white.opacity(0.9))
-                
-                Text("•")
-                    .font(Constants.Fonts.headline)
-                    .foregroundColor(.white.opacity(0.5))
-                
-                Text(scheduleViewModel.currentScheduleAbbreviation)
-                    .font(Constants.Fonts.headline)
-                    .fontWeight(.medium)
-                    .foregroundColor(.white.opacity(0.7))
-            }
-            
+        VStack(spacing: 4) {
             Text(scheduleViewModel.currentDateString)
-                .font(Constants.Fonts.body)
-                .foregroundColor(.white.opacity(0.7))
+                .font(Constants.Fonts.headline)
+                .foregroundColor(.white)
+                .fontWeight(.medium)
         }
     }
     
@@ -139,10 +125,18 @@ struct ScheduleView: View {
                     .font(Constants.Fonts.body)
                     .foregroundColor(.white.opacity(0.7))
                 
-                Text(preferences.getClassName(for: nextPeriod))
+                let nextClassInfo = preferences.getClassInfo(for: nextPeriod)
+                
+                Text(nextClassInfo.displayName)
                     .font(Constants.Fonts.title)
                     .foregroundColor(.white)
                     .fontWeight(.semibold)
+                
+                if nextClassInfo.hasDetails {
+                    Text(nextClassInfo.detailsText)
+                        .font(Constants.Fonts.body)
+                        .foregroundColor(.white.opacity(0.7))
+                }
                 
                 Text(TimeFormatter.shared.formatTimeRange(
                     start: nextPeriod.startDate,
@@ -160,15 +154,20 @@ struct ScheduleView: View {
         VStack(spacing: 24) {
             // Current class name
             VStack(spacing: 8) {
-                Text("Current Class")
-                    .font(Constants.Fonts.body)
-                    .foregroundColor(.white.opacity(0.7))
+                let classInfo = preferences.getClassInfo(for: period)
                 
-                Text(preferences.getClassName(for: period))
+                Text(classInfo.displayName)
                     .font(Constants.Fonts.largeTitle)
                     .foregroundColor(.white)
                     .fontWeight(.bold)
                     .multilineTextAlignment(.center)
+                
+                if classInfo.hasDetails {
+                    Text(classInfo.detailsText)
+                        .font(Constants.Fonts.body)
+                        .foregroundColor(.white.opacity(0.8))
+                        .multilineTextAlignment(.center)
+                }
             }
             
             // Countdown timer with circular progress
@@ -237,11 +236,20 @@ struct ScheduleView: View {
                     .font(Constants.Fonts.body)
                     .foregroundColor(.white.opacity(0.7))
                 
-                Text(preferences.getClassName(for: nextPeriod))
+                let nextClassInfo = preferences.getClassInfo(for: nextPeriod)
+                
+                Text(nextClassInfo.displayName)
                     .font(Constants.Fonts.title)
                     .foregroundColor(.white)
                     .fontWeight(.semibold)
                     .multilineTextAlignment(.center)
+                
+                if nextClassInfo.hasDetails {
+                    Text(nextClassInfo.detailsText)
+                        .font(Constants.Fonts.body)
+                        .foregroundColor(.white.opacity(0.7))
+                        .multilineTextAlignment(.center)
+                }
             }
         }
         .padding(.vertical, 20)
@@ -276,32 +284,45 @@ struct ScheduleView: View {
                     .font(Constants.Fonts.headline)
                     .foregroundColor(.white)
                     .fontWeight(.semibold)
+                    .padding(.horizontal, 16)
+                    .padding(.top, 16)
                 
-                LazyVStack(spacing: 8) {
-                    ForEach(scheduleViewModel.upcomingPeriods.prefix(3)) { period in
-                        upcomingPeriodRow(period: period)
+                ScrollView {
+                    LazyVStack(spacing: 8) {
+                        ForEach(scheduleViewModel.upcomingPeriods) { period in
+                            upcomingPeriodRow(period: period)
+                                .padding(.horizontal, 16)
+                        }
                     }
+                    .padding(.bottom, 16)
                 }
+                .frame(maxHeight: 300) // Increased height to show more classes
             }
-            .padding(.horizontal, 16)
-            .padding(.vertical, 16)
             .background(
                 RoundedRectangle(cornerRadius: Constants.Layout.cornerRadius)
                     .fill(Color.white.opacity(0.15))
             )
-            .padding(.bottom, 20)
+            .padding(.bottom, 40) // Reduced bottom padding
         }
     }
     
     private func upcomingPeriodRow(period: Period) -> some View {
         HStack {
             VStack(alignment: .leading, spacing: 2) {
-                Text(preferences.getClassName(for: period))
+                let classInfo = preferences.getClassInfo(for: period)
+                
+                Text(classInfo.displayName)
                     .font(Constants.Fonts.body)
                     .foregroundColor(.white)
                     .fontWeight(.medium)
                 
-                Text("Period \(period.number)")
+                if classInfo.hasDetails {
+                    Text(classInfo.detailsText)
+                        .font(Constants.Fonts.caption)
+                        .foregroundColor(.white.opacity(0.6))
+                }
+                
+                Text(period.displayName)
                     .font(Constants.Fonts.caption)
                     .foregroundColor(.white.opacity(0.7))
             }

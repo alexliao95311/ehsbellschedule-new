@@ -11,6 +11,14 @@ struct Period: Identifiable, Codable, Equatable {
         endTime - startTime
     }
     
+    var displayName: String {
+        if number == 99 {
+            return "ACCESS"
+        } else {
+            return "Period \(number)"
+        }
+    }
+    
     var startDate: Date {
         Date(timeIntervalSinceReferenceDate: startTime)
     }

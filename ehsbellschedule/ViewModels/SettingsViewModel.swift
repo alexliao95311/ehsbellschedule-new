@@ -9,7 +9,7 @@ class SettingsViewModel: ObservableObject {
     private var cancellables = Set<AnyCancellable>()
     
     init() {
-        self.preferences = UserPreferences()
+        self.preferences = UserPreferences.shared
         self.notificationService = NotificationService.shared
         
         setupBindings()

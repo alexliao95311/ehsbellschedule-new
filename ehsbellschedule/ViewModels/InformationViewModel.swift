@@ -6,7 +6,7 @@ class InformationViewModel: ObservableObject {
     @Published var filteredPeriods: [Period] = []
     @Published var scheduleAnalytics: ScheduleAnalytics = ScheduleAnalytics()
     
-    private let preferences = UserPreferences()
+    private let preferences = UserPreferences.shared
     private let scheduleCalculator = ScheduleCalculator.shared
     private var cancellables = Set<AnyCancellable>()
     

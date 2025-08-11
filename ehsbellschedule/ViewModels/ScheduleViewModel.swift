@@ -66,7 +66,7 @@ class ScheduleViewModel: ObservableObject {
     
     private func updateUpcomingPeriods() {
         let currentSchedule = scheduleCalculator.getCurrentSchedule()
-        let preferences = UserPreferences()
+        let preferences = UserPreferences.shared
         
         let filteredPeriods = currentSchedule.filteredPeriods(
             showPeriod0: preferences.showPeriod0,
@@ -89,7 +89,7 @@ class ScheduleViewModel: ObservableObject {
     }
     
     private func createWidgetData() -> WidgetData {
-        let preferences = UserPreferences()
+        let preferences = UserPreferences.shared
         
         switch scheduleStatus {
         case .inClass(let period, let timeRemaining, let progress):

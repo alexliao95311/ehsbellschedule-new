@@ -2,7 +2,7 @@ import SwiftUI
 import UserNotifications
 
 struct SettingsView: View {
-    @StateObject private var preferences = UserPreferences()
+    @ObservedObject private var preferences = UserPreferences.shared
     @StateObject private var notificationService = NotificationService.shared
     @State private var showingNotificationAlert = false
     @State private var showingResetAlert = false

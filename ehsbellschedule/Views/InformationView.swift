@@ -1,7 +1,7 @@
 import SwiftUI
 
 struct InformationView: View {
-    @StateObject private var preferences = UserPreferences()
+    @ObservedObject private var preferences = UserPreferences.shared
     @State private var selectedScheduleType: ScheduleType = .monday
     
     var body: some View {
@@ -62,12 +62,20 @@ struct InformationView: View {
             // Header
             HStack {
                 VStack(alignment: .leading, spacing: 4) {
-                    Text(preferences.getClassName(for: period))
+                    let classInfo = preferences.getClassInfo(for: period)
+                    
+                    Text(classInfo.displayName)
                         .font(Constants.Fonts.headline)
                         .foregroundColor(Constants.Colors.textPrimary)
                         .fontWeight(.semibold)
                     
-                    Text("Period \(period.number)")
+                    if classInfo.hasDetails {
+                        Text(classInfo.detailsText)
+                            .font(Constants.Fonts.caption)
+                            .foregroundColor(Constants.Colors.textSecondary)
+                    }
+                    
+                    Text(period.displayName)
                         .font(Constants.Fonts.body)
                         .foregroundColor(Constants.Colors.textSecondary)
                 }
@@ -79,9 +87,6 @@ struct InformationView: View {
             
             // Time Information
             timeInfoSection(for: period)
-            
-            // Duration Information
-            durationInfoSection(for: period)
         }
         .padding(20)
         .background(Constants.Colors.cardBackground)
@@ -108,7 +113,7 @@ struct InformationView: View {
     }
     
     private func timeInfoSection(for period: Period) -> some View {
-        HStack(spacing: 16) {
+        HStack(spacing: 12) {
             timeInfoItem(
                 icon: "clock",
                 title: "Start Time",
@@ -121,6 +126,13 @@ struct InformationView: View {
                 title: "End Time", 
                 value: TimeFormatter.shared.formatTime(period.endDate, use24Hour: preferences.use24HourFormat),
                 color: Constants.Colors.warning
+            )
+            
+            timeInfoItem(
+                icon: "timer",
+                title: "Duration",
+                value: TimeFormatter.shared.formatDuration(period.duration),
+                color: Constants.Colors.primaryGreen
             )
         }
     }
@@ -145,61 +157,13 @@ struct InformationView: View {
         }
     }
     
-    private func durationInfoSection(for period: Period) -> some View {
-        VStack(alignment: .leading, spacing: 8) {
-            HStack {
-                Image(systemName: "timer")
-                    .foregroundColor(Constants.Colors.primaryBlue)
-                    .frame(width: 20)
-                
-                Text("Duration")
-                    .font(Constants.Fonts.body)
-                    .foregroundColor(Constants.Colors.textSecondary)
-                
-                Spacer()
-                
-                Text(TimeFormatter.shared.formatDuration(period.duration))
-                    .font(Constants.Fonts.body)
-                    .foregroundColor(Constants.Colors.textPrimary)
-                    .fontWeight(.medium)
-                    .monospacedDigit()
-            }
-            
-            // Visual duration bar
-            GeometryReader { geometry in
-                RoundedRectangle(cornerRadius: 4)
-                    .fill(Constants.Colors.primaryBlue.opacity(0.2))
-                    .overlay(
-                        HStack {
-                            RoundedRectangle(cornerRadius: 4)
-                                .fill(
-                                    LinearGradient(
-                                        colors: [Constants.Colors.primaryBlue, Constants.Colors.secondaryBlue],
-                                        startPoint: .leading,
-                                        endPoint: .trailing
-                                    )
-                                )
-                                .frame(width: geometry.size.width * durationRatio(for: period))
-                            
-                            Spacer(minLength: 0)
-                        }
-                    )
-            }
-            .frame(height: 6)
-        }
-    }
-    
-    private func durationRatio(for period: Period) -> Double {
-        let maxDuration: TimeInterval = 51 * 60 // 51 minutes (longest period)
-        return min(1.0, period.duration / maxDuration)
-    }
 }
 
 // MARK: - Schedule Summary View
 
 struct ScheduleSummaryView: View {
     let scheduleType: ScheduleType
-    @StateObject private var preferences = UserPreferences()
+    @ObservedObject private var preferences = UserPreferences.shared
     
     var body: some View {
         let schedule = ScheduleCalculator.shared.getScheduleForType(scheduleType)

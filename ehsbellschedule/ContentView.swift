@@ -9,7 +9,7 @@ import SwiftUI
 import UIKit
 
 struct ContentView: View {
-    @StateObject private var preferences = UserPreferences()
+    @ObservedObject private var preferences = UserPreferences.shared
     @StateObject private var notificationService = NotificationService.shared
     
     var body: some View {

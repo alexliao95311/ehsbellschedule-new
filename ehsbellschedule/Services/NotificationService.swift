@@ -118,7 +118,7 @@ class NotificationService: ObservableObject {
     private func scheduleNotificationsForDay(_ date: Date) async {
         let calculator = ScheduleCalculator.shared
         let schedule = calculator.getCurrentSchedule(for: date)
-        let preferences = UserPreferences()
+        let preferences = UserPreferences.shared
         
         let filteredPeriods = schedule.filteredPeriods(
             showPeriod0: preferences.showPeriod0,
