@@ -95,11 +95,14 @@ class DataPersistenceService {
     // MARK: - Widget Data Sharing
     
     func saveWidgetData(_ data: WidgetData) {
-        print("🔄 Saving widget data: \(data.scheduleStatus)")
+        print("🔄 DataPersistenceService: Saving widget data")
+        print("   Schedule status: \(data.scheduleStatus)")
         print("   Current period: \(data.currentPeriodName ?? "nil")")
         print("   Teacher: \(data.currentPeriodTeacher ?? "nil")")
         print("   Room: \(data.currentPeriodRoom ?? "nil")")
         print("   Time remaining: \(data.timeRemaining ?? 0)")
+        print("   Last updated: \(data.lastUpdated)")
+        print("   Current time: \(Date())")
         
         // Save to shared UserDefaults for widget access
         if let sharedDefaults = sharedUserDefaults {
@@ -108,6 +111,8 @@ class DataPersistenceService {
                 sharedDefaults.set(encoded, forKey: "widgetData")
                 sharedDefaults.synchronize()
                 print("✅ Widget data saved to shared UserDefaults successfully")
+                print("   Data size: \(encoded.count) bytes")
+                print("   Shared UserDefaults path: \(sharedDefaults.dictionaryRepresentation().keys)")
             } catch {
                 print("❌ Failed to save widget data to shared UserDefaults: \(error)")
             }

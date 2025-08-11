@@ -65,6 +65,10 @@ class WidgetDataProvider {
         
         if let sharedDefaults = UserDefaults(suiteName: appGroupIdentifier) {
             print("✅ Shared UserDefaults available")
+            
+            // Force refresh the shared UserDefaults
+            sharedDefaults.synchronize()
+            
             if let data = sharedDefaults.data(forKey: "widgetData") {
                 print("📦 Found data in shared UserDefaults, size: \(data.count) bytes")
                 if let widgetData = try? JSONDecoder().decode(WidgetData.self, from: data) {
@@ -73,6 +77,17 @@ class WidgetDataProvider {
                     print("   Current period: \(widgetData.currentPeriodName ?? "nil")")
                     print("   Teacher: \(widgetData.currentPeriodTeacher ?? "nil")")
                     print("   Room: \(widgetData.currentPeriodRoom ?? "nil")")
+                    print("   Time remaining: \(widgetData.timeRemaining ?? 0)")
+                    print("   Last updated: \(widgetData.lastUpdated)")
+                    
+                    // Check if data is stale (older than 30 seconds)
+                    let timeSinceUpdate = Date().timeIntervalSince(widgetData.lastUpdated)
+                    if timeSinceUpdate > 30 {
+                        print("⚠️ Data is stale! Last updated \(Int(timeSinceUpdate)) seconds ago")
+                    } else {
+                        print("✅ Data is fresh! Updated \(Int(timeSinceUpdate)) seconds ago")
+                    }
+                    
                     return widgetData
                 } else {
                     print("❌ Failed to decode widget data from shared UserDefaults")

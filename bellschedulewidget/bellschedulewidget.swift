@@ -29,7 +29,7 @@ struct BellScheduleProvider: AppIntentTimelineProvider {
     }
     
     func timeline(for configuration: BellScheduleIntent, in context: Context) async -> Timeline<BellScheduleEntry> {
-        let widgetData = WidgetDataProvider.shared.getWidgetData()
+        // Always fetch fresh data for each timeline entry
         let currentDate = Date()
         
         // Create multiple entries for very frequent updates
@@ -42,10 +42,15 @@ struct BellScheduleProvider: AppIntentTimelineProvider {
         // Create entries for the next 20 updates (more frequent)
         for i in 0..<20 {
             let entryDate = Calendar.current.date(byAdding: .second, value: Int(updateInterval * Double(i)), to: currentDate) ?? currentDate
+            
+            // Fetch fresh data for each entry to ensure accuracy
+            let freshWidgetData = WidgetDataProvider.shared.getWidgetData()
+            print("📅 Timeline entry \(i): Using data from \(freshWidgetData.lastUpdated), time remaining: \(freshWidgetData.timeRemaining ?? 0)")
+            
             let entry = BellScheduleEntry(
                 date: entryDate,
                 configuration: configuration,
-                widgetData: widgetData
+                widgetData: freshWidgetData
             )
             entries.append(entry)
         }
@@ -190,11 +195,7 @@ struct SmallWidgetView: View {
         .padding(.horizontal, 12)
         .padding(.vertical, 8)
         .background(
-            LinearGradient(
-                colors: [Color.black.opacity(0.9), Color.gray.opacity(0.8)],
-                startPoint: .topLeading,
-                endPoint: .bottomTrailing
-            )
+            Color.black
         )
         .cornerRadius(12)
     }
@@ -374,11 +375,7 @@ struct MediumWidgetView: View {
         .padding(.horizontal, 16)
         .padding(.vertical, 12)
         .background(
-            LinearGradient(
-                colors: [Color.black.opacity(0.9), Color.gray.opacity(0.8)],
-                startPoint: .topLeading,
-                endPoint: .bottomTrailing
-            )
+            Color.black
         )
         .cornerRadius(16)
     }
