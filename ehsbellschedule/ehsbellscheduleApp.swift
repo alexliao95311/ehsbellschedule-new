@@ -12,8 +12,13 @@ import UserNotifications
 struct ehsbellscheduleApp: App {
     @UIApplicationDelegateAdaptor(AppDelegate.self) var appDelegate
     
+    init() {
+        print("🚀🚀🚀 ehsbellscheduleApp INITIALIZED! 🚀🚀🚀")
+    }
+    
     var body: some Scene {
         WindowGroup {
+            print("🏗️ Building ContentView...")
             ContentView()
         }
     }
@@ -21,6 +26,7 @@ struct ehsbellscheduleApp: App {
 
 class AppDelegate: NSObject, UIApplicationDelegate, UNUserNotificationCenterDelegate {
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey : Any]? = nil) -> Bool {
+        print("🎯 AppDelegate: didFinishLaunchingWithOptions called")
         UNUserNotificationCenter.current().delegate = self
         return true
     }
