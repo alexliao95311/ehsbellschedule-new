@@ -3,22 +3,58 @@ import SwiftUI
 struct ScheduleView: View {
     @StateObject private var scheduleViewModel = ScheduleViewModel()
     @ObservedObject private var preferences = UserPreferences.shared
+    @State private var showingCustomClassNames = false
     
     var body: some View {
-        ZStack {
-            backgroundView
-            
-            VStack(spacing: 20) {
-                headerView
+        NavigationView {
+            VStack(spacing: 0) {
+                // Main content in a ScrollView
+                ScrollView {
+                    VStack(spacing: 20) {
+                        headerView
+                        mainContentView
+                        upcomingPeriodsView
+                    }
+                    .padding(.horizontal, Constants.Layout.padding)
+                    .padding(.top, 20)
+                    .padding(.bottom, 100) // Add padding for footer
+                }
+                .background(backgroundView)
                 
-                mainContentView
-                
-                Spacer()
-                
-                upcomingPeriodsView
+                // Footer section (matching SettingsView style)
+                footerView
             }
-            .padding(.horizontal, Constants.Layout.padding)
-            .padding(.top, 60)
+        }
+        .sheet(isPresented: $showingCustomClassNames) {
+            NavigationView {
+                VStack {
+                    // Custom header with X button
+                    HStack {
+                        Text("Custom Class Names")
+                            .font(.headline)
+                            .fontWeight(.semibold)
+                        
+                        Spacer()
+                        
+                        Button(action: {
+                            showingCustomClassNames = false
+                        }) {
+                            Image(systemName: "xmark.circle.fill")
+                                .font(.title2)
+                                .foregroundColor(.gray)
+                        }
+                    }
+                    .padding(.horizontal)
+                    .padding(.top)
+                    
+                    Divider()
+                    
+                    // The actual CustomClassNamesView content
+                    CustomClassNamesView()
+                        .navigationBarHidden(true)
+                }
+            }
+            .presentationDetents([.medium, .large])
         }
         .id(preferences.use24HourFormat) // Force refresh when format changes
         .onAppear {
@@ -45,6 +81,47 @@ struct ScheduleView: View {
         } else {
             Constants.Colors.backgroundGray.ignoresSafeArea()
         }
+    }
+    
+    // MARK: - Footer View (matching SettingsView style)
+    
+    private var footerView: some View {
+        VStack(spacing: 0) {
+            Divider()
+                .background(Color(.separator))
+            
+            HStack {
+                Button(action: {
+                    showingCustomClassNames = true
+                }) {
+                    HStack {
+                        Image(systemName: "pencil")
+                            .foregroundColor(Constants.Colors.primaryGreen)
+                            .frame(width: 24)
+                        
+                        VStack(alignment: .leading, spacing: 2) {
+                            Text("Custom Class Names")
+                                .font(Constants.Fonts.body)
+                                .foregroundColor(Constants.Colors.textPrimary)
+                            
+                            Text("Personalize your class names")
+                                .font(Constants.Fonts.caption)
+                                .foregroundColor(Constants.Colors.textSecondary)
+                        }
+                        
+                        Spacer()
+                        
+                        Image(systemName: "chevron.right")
+                            .font(.caption)
+                            .foregroundColor(Constants.Colors.textSecondary)
+                    }
+                }
+                .padding(.horizontal, 16)
+                .padding(.vertical, 12)
+            }
+            .background(Color.white)
+        }
+        .background(Color.white)
     }
     
     // MARK: - Header View
@@ -283,22 +360,18 @@ struct ScheduleView: View {
                     .padding(.horizontal, 16)
                     .padding(.top, 16)
                 
-                ScrollView {
-                    LazyVStack(spacing: 8) {
-                        ForEach(scheduleViewModel.upcomingPeriods) { period in
-                            upcomingPeriodRow(period: period)
-                                .padding(.horizontal, 16)
-                        }
+                LazyVStack(spacing: 8) {
+                    ForEach(scheduleViewModel.upcomingPeriods) { period in
+                        upcomingPeriodRow(period: period)
+                            .padding(.horizontal, 16)
                     }
-                    .padding(.bottom, 16)
                 }
-                .frame(maxHeight: 300) // Increased height to show more classes
+                .padding(.bottom, 16)
             }
             .background(
                 RoundedRectangle(cornerRadius: Constants.Layout.cornerRadius)
                     .fill(Constants.Colors.primaryGreen.opacity(0.15))
             )
-            .padding(.bottom, 40) // Reduced bottom padding
         }
     }
     

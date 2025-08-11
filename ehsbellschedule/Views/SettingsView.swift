@@ -14,10 +14,11 @@ struct SettingsView: View {
     var body: some View {
         NavigationView {
             List {
+                // Moved customization section to the top since it's most important
+                customizationSection
                 displaySettingsSection
                 scheduleSettingsSection
                 notificationSettingsSection
-                customizationSection
                 aboutSection
             }
             .navigationTitle("Settings")
@@ -48,6 +49,38 @@ struct SettingsView: View {
             Button("OK") { }
         } message: {
             Text(testResultMessage)
+        }
+    }
+    
+    // MARK: - Customization Section (moved to top - most important)
+    
+    private var customizationSection: some View {
+        Section("Customization") {
+            Button(action: {
+                showingCustomClassNames = true
+            }) {
+                HStack {
+                    Image(systemName: "pencil")
+                        .foregroundColor(Constants.Colors.primaryGreen)
+                        .frame(width: 24)
+                    
+                    VStack(alignment: .leading, spacing: 2) {
+                        Text("Custom Class Names")
+                            .font(Constants.Fonts.body)
+                            .foregroundColor(Constants.Colors.textPrimary)
+                        
+                        Text("Personalize your class names")
+                            .font(Constants.Fonts.caption)
+                            .foregroundColor(Constants.Colors.textSecondary)
+                    }
+                    
+                    Spacer()
+                    
+                    Image(systemName: "chevron.right")
+                        .font(.caption)
+                        .foregroundColor(Constants.Colors.textSecondary)
+                }
+            }
         }
     }
     
@@ -230,38 +263,6 @@ struct SettingsView: View {
             }
         }
         .disabled(testNotificationSent)
-    }
-    
-    // MARK: - Customization Section
-    
-    private var customizationSection: some View {
-        Section("Customization") {
-            Button(action: {
-                showingCustomClassNames = true
-            }) {
-                HStack {
-                    Image(systemName: "pencil")
-                        .foregroundColor(Constants.Colors.primaryGreen)
-                        .frame(width: 24)
-                    
-                    VStack(alignment: .leading, spacing: 2) {
-                        Text("Custom Class Names")
-                            .font(Constants.Fonts.body)
-                            .foregroundColor(Constants.Colors.textPrimary)
-                        
-                        Text("Personalize your class names")
-                            .font(Constants.Fonts.caption)
-                            .foregroundColor(Constants.Colors.textSecondary)
-                    }
-                    
-                    Spacer()
-                    
-                    Image(systemName: "chevron.right")
-                        .font(.caption)
-                        .foregroundColor(Constants.Colors.textSecondary)
-                }
-            }
-        }
     }
     
     // MARK: - About Section
