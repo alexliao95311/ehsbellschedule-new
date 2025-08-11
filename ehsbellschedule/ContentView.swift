@@ -38,6 +38,7 @@ struct ContentView: View {
         }
         .tint(Constants.Colors.primaryGreen)
         .onAppear {
+            print("🚀 ContentView appeared - Main app is running!")
             setupInitialState()
             setupTabBarAppearance()
         }
@@ -48,10 +49,12 @@ struct ContentView: View {
     }
     
     private func setupInitialState() {
+        print("🔧 setupInitialState called")
         // Check notification authorization on app launch
         notificationService.checkAuthorizationStatus()
         
         // Setup widget data sharing
+        print("📱 Setting up widget data sharing...")
         updateWidgetData()
         
         // Request notification permissions if not already requested
