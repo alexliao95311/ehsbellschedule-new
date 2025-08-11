@@ -56,6 +56,20 @@ class TimeFormatter {
         }
     }
     
+    func formatCompactCountdown(_ timeInterval: TimeInterval) -> String {
+        let totalSeconds = Int(max(0, timeInterval))
+        let hours = totalSeconds / 3600
+        let minutes = (totalSeconds % 3600) / 60
+        let seconds = totalSeconds % 60
+        
+        if hours > 0 {
+            // For > 1 hour, show just hours and minutes to save space
+            return String(format: "%dh %dm", hours, minutes)
+        } else {
+            return String(format: "%02d:%02d", minutes, seconds)
+        }
+    }
+    
     func formatTimeUntil(_ timeInterval: TimeInterval) -> String {
         let totalMinutes = Int(timeInterval / 60)
         let hours = totalMinutes / 60

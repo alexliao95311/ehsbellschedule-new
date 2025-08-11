@@ -444,10 +444,6 @@ struct LargeWidgetView: View {
                     // Circular progress
                     ZStack {
                         Circle()
-                            .stroke(Color.green.opacity(0.2), lineWidth: 8)
-                            .frame(width: 100, height: 100)
-                        
-                        Circle()
                             .trim(from: 0, to: progress)
                             .stroke(Color.green, style: StrokeStyle(lineWidth: 8, lineCap: .round))
                             .frame(width: 100, height: 100)

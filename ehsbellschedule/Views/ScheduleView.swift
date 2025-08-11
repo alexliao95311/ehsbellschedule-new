@@ -7,23 +7,26 @@ struct ScheduleView: View {
     
     var body: some View {
         NavigationView {
-            VStack(spacing: 0) {
-                // Main content in a ScrollView
-                ScrollView {
-                    VStack(spacing: 20) {
-                        headerView
-                        mainContentView
-                        upcomingPeriodsView
+            ZStack {
+                backgroundView
+                VStack(spacing: 0) {
+                    // Main content in a ScrollView
+                    ScrollView {
+                        VStack(spacing: 20) {
+                            headerView
+                            mainContentView
+                            upcomingPeriodsView
+                        }
+                        .padding(.horizontal, Constants.Layout.padding)
+                        .padding(.top, 20)
+                        .padding(.bottom, 100) // Add padding for footer
                     }
-                    .padding(.horizontal, Constants.Layout.padding)
-                    .padding(.top, 20)
-                    .padding(.bottom, 100) // Add padding for footer
-                }
-                .background(backgroundView)
-                
-                // Footer section (only show if no custom class names exist)
-                if !preferences.hasAnyCustomClassNames() {
-                    footerView
+                    .background(Color.clear)
+
+                    // Footer section (only show if no custom class names exist)
+                    if !preferences.hasAnyCustomClassNames() {
+                        footerView
+                    }
                 }
             }
         }
@@ -90,6 +93,7 @@ struct ScheduleView: View {
                         .ignoresSafeArea()
                 )
         } else {
+            // Ensure the entire background is the app's background gray, including behind ScrollView
             Constants.Colors.backgroundGray(preferences.isDarkMode).ignoresSafeArea()
         }
     }
@@ -280,8 +284,8 @@ struct ScheduleView: View {
                 
                 // Time remaining
                 VStack(spacing: 4) {
-                    Text(TimeFormatter.shared.formatCountdown(timeRemaining))
-                        .font(Constants.Fonts.countdown)
+                    Text(TimeFormatter.shared.formatCompactCountdown(timeRemaining))
+                        .font(timeRemaining > 3600 ? Constants.Fonts.title : Constants.Fonts.countdown)
                         .foregroundColor(preferences.isDarkMode ? Constants.Colors.textPrimary(preferences.isDarkMode) : Constants.Colors.primaryGreen(preferences.isDarkMode))
                         .fontWeight(.bold)
                         .monospacedDigit()
@@ -388,10 +392,6 @@ struct ScheduleView: View {
                 }
                 .padding(.bottom, 16)
             }
-            .background(
-                RoundedRectangle(cornerRadius: Constants.Layout.cornerRadius)
-                    .fill(Constants.Colors.primaryGreen(preferences.isDarkMode).opacity(0.15))
-            )
         }
     }
     
@@ -425,9 +425,5 @@ struct ScheduleView: View {
         }
         .padding(.horizontal, 12)
         .padding(.vertical, 8)
-        .background(
-            RoundedRectangle(cornerRadius: 8)
-                .fill(Constants.Colors.primaryGreen(preferences.isDarkMode).opacity(0.1))
-        )
     }
 }
