@@ -41,6 +41,13 @@ struct ContentView: View {
             print("🚀 ContentView appeared - Main app is running!")
             setupInitialState()
             setupTabBarAppearance()
+            
+            // Set up frequent widget updates
+            setupFrequentWidgetUpdates()
+        }
+        .onReceive(NotificationCenter.default.publisher(for: UIApplication.didBecomeActiveNotification)) { _ in
+            print("📱 App became active - updating widget data")
+            updateWidgetData()
         }
         .onChange(of: selectedTab) { newValue in
             print("Tab changed to: \(newValue)")
@@ -196,6 +203,16 @@ struct ContentView: View {
                     tabBarController.tabBar.layoutIfNeeded()
                 }
             }
+        }
+    }
+    
+    // MARK: - Widget Update Management
+    
+    private func setupFrequentWidgetUpdates() {
+        // Update widget data every 5 seconds to ensure it stays current
+        Timer.scheduledTimer(withTimeInterval: 5.0, repeats: true) { _ in
+            print("🔄 Frequent widget update triggered")
+            self.updateWidgetData()
         }
     }
 }

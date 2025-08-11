@@ -32,15 +32,15 @@ struct BellScheduleProvider: AppIntentTimelineProvider {
         let widgetData = WidgetDataProvider.shared.getWidgetData()
         let currentDate = Date()
         
-        // Create multiple entries for frequent updates
+        // Create multiple entries for very frequent updates
         var entries: [BellScheduleEntry] = []
         
-        // Update every 30 seconds during school hours, every 2 minutes otherwise
+        // Update every 10 seconds during school hours, every 30 seconds otherwise
         let isActiveTime = isSchoolActiveTime(currentDate)
-        let updateInterval: TimeInterval = isActiveTime ? 30 : 2 * 60
+        let updateInterval: TimeInterval = isActiveTime ? 10 : 30
         
-        // Create entries for the next few updates
-        for i in 0..<10 {
+        // Create entries for the next 20 updates (more frequent)
+        for i in 0..<20 {
             let entryDate = Calendar.current.date(byAdding: .second, value: Int(updateInterval * Double(i)), to: currentDate) ?? currentDate
             let entry = BellScheduleEntry(
                 date: entryDate,

@@ -70,7 +70,7 @@ struct Constants {
     
     // MARK: - Timing
     struct Timing {
-        static let countdownUpdateInterval: TimeInterval = 1.0
+        static let countdownUpdateInterval: TimeInterval = 0.5  // Update every 0.5 seconds instead of 1 second
         static let notificationRequestInterval: TimeInterval = 60.0
         static let defaultNotificationMinutes = 2
         static let passingPeriodMinutes = 9
