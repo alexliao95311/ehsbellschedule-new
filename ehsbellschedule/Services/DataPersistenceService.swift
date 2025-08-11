@@ -95,19 +95,29 @@ class DataPersistenceService {
     // MARK: - Widget Data Sharing
     
     func saveWidgetData(_ data: WidgetData) {
+        print("🔄 Saving widget data: \(data.scheduleStatus)")
+        print("   Current period: \(data.currentPeriodName ?? "nil")")
+        print("   Teacher: \(data.currentPeriodTeacher ?? "nil")")
+        print("   Room: \(data.currentPeriodRoom ?? "nil")")
+        print("   Time remaining: \(data.timeRemaining ?? 0)")
+        
         // Save to shared UserDefaults for widget access
         if let sharedDefaults = sharedUserDefaults {
             do {
                 let encoded = try JSONEncoder().encode(data)
                 sharedDefaults.set(encoded, forKey: "widgetData")
                 sharedDefaults.synchronize()
+                print("✅ Widget data saved to shared UserDefaults successfully")
             } catch {
-                print("Failed to save widget data to shared UserDefaults: \(error)")
+                print("❌ Failed to save widget data to shared UserDefaults: \(error)")
             }
+        } else {
+            print("❌ Shared UserDefaults not available")
         }
         
         // Also save to local UserDefaults as backup
         save(data, forKey: "widgetData")
+        print("✅ Widget data saved to local UserDefaults as backup")
     }
     
     func loadWidgetData() -> WidgetData? {

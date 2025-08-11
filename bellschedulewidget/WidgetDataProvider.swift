@@ -61,12 +61,45 @@ class WidgetDataProvider {
     }
     
     func getWidgetData() -> WidgetData {
-        guard let data = userDefaults.data(forKey: "widgetData"),
-              let widgetData = try? JSONDecoder().decode(WidgetData.self, from: data) else {
-            return WidgetData(scheduleStatus: "No Data")
+        print("🔍 Widget requesting data...")
+        
+        if let sharedDefaults = UserDefaults(suiteName: appGroupIdentifier) {
+            print("✅ Shared UserDefaults available")
+            if let data = sharedDefaults.data(forKey: "widgetData") {
+                print("📦 Found data in shared UserDefaults, size: \(data.count) bytes")
+                if let widgetData = try? JSONDecoder().decode(WidgetData.self, from: data) {
+                    print("✅ Successfully decoded widget data:")
+                    print("   Status: \(widgetData.scheduleStatus)")
+                    print("   Current period: \(widgetData.currentPeriodName ?? "nil")")
+                    print("   Teacher: \(widgetData.currentPeriodTeacher ?? "nil")")
+                    print("   Room: \(widgetData.currentPeriodRoom ?? "nil")")
+                    return widgetData
+                } else {
+                    print("❌ Failed to decode widget data from shared UserDefaults")
+                }
+            } else {
+                print("❌ No data found in shared UserDefaults")
+            }
+        } else {
+            print("❌ Shared UserDefaults not available")
         }
         
-        return widgetData
+        // Fall back to local UserDefaults
+        print("🔄 Falling back to local UserDefaults...")
+        if let data = userDefaults.data(forKey: "widgetData") {
+            print("📦 Found data in local UserDefaults, size: \(data.count) bytes")
+            if let widgetData = try? JSONDecoder().decode(WidgetData.self, from: data) {
+                print("✅ Successfully decoded widget data from local UserDefaults")
+                return widgetData
+            } else {
+                print("❌ Failed to decode widget data from local UserDefaults")
+            }
+        } else {
+            print("❌ No data found in local UserDefaults either")
+        }
+        
+        print("⚠️ Returning default 'No Data' widget data")
+        return WidgetData(scheduleStatus: "No Data")
     }
     
     func saveWidgetData(_ data: WidgetData) {

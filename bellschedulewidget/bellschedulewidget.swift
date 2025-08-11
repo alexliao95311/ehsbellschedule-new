@@ -190,15 +190,19 @@ struct SmallWidgetView: View {
     }
     
     private var scheduleStatusMessage: String {
+        // Add debug info to see what's happening
+        let debugInfo = "Status: \(entry.widgetData.scheduleStatus)"
+        let dataInfo = "Data: \(entry.widgetData.currentPeriodName ?? "nil")"
+        
         switch entry.widgetData.scheduleStatus {
         case "No School":
-            return "No School Today"
+            return "No School Today\n\(debugInfo)\n\(dataInfo)"
         case "After School":
-            return "School's Out!"
+            return "School's Out!\n\(debugInfo)\n\(dataInfo)"
         case "Before School":
-            return "School Starts Soon"
+            return "School Starts Soon\n\(debugInfo)\n\(dataInfo)"
         default:
-            return entry.widgetData.scheduleStatus
+            return "\(entry.widgetData.scheduleStatus)\n\(debugInfo)\n\(dataInfo)"
         }
     }
 }
