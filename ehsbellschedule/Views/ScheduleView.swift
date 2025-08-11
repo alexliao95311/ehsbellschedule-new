@@ -236,21 +236,30 @@ struct ScheduleView: View {
     
     private func inClassView(period: Period, timeRemaining: TimeInterval, progress: Double) -> some View {
         VStack(spacing: 24) {
-            // Current class name
-            VStack(spacing: 8) {
+            // Current class name with icon for lunch
+            VStack(spacing: 12) {
                 let classInfo = preferences.getClassInfo(for: period)
                 
-                Text(classInfo.displayName)
-                    .font(Constants.Fonts.largeTitle)
-                    .foregroundColor(preferences.isDarkMode ? Constants.Colors.textPrimary(preferences.isDarkMode) : Constants.Colors.primaryGreen(preferences.isDarkMode))
-                    .fontWeight(.bold)
-                    .multilineTextAlignment(.center)
+                // Show lunch icon for lunch period
+                if period.number == 98 {
+                    Image(systemName: "fork.knife")
+                        .font(.system(size: 50))
+                        .foregroundColor(Constants.Colors.primaryGreen(preferences.isDarkMode))
+                }
                 
-                if classInfo.hasDetails {
-                    Text(classInfo.detailsText)
-                        .font(Constants.Fonts.body)
-                        .foregroundColor(preferences.isDarkMode ? Constants.Colors.textSecondary(preferences.isDarkMode) : Constants.Colors.primaryGreen(preferences.isDarkMode).opacity(0.8))
+                VStack(spacing: 8) {
+                    Text(classInfo.displayName)
+                        .font(Constants.Fonts.largeTitle)
+                        .foregroundColor(preferences.isDarkMode ? Constants.Colors.textPrimary(preferences.isDarkMode) : Constants.Colors.primaryGreen(preferences.isDarkMode))
+                        .fontWeight(.bold)
                         .multilineTextAlignment(.center)
+                
+                    if classInfo.hasDetails {
+                        Text(classInfo.detailsText)
+                            .font(Constants.Fonts.body)
+                            .foregroundColor(preferences.isDarkMode ? Constants.Colors.textSecondary(preferences.isDarkMode) : Constants.Colors.primaryGreen(preferences.isDarkMode).opacity(0.8))
+                            .multilineTextAlignment(.center)
+                    }
                 }
             }
             
