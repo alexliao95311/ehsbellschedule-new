@@ -214,8 +214,8 @@ class NotificationService: ObservableObject {
         print("🗑️ Removed existing test notifications")
         
         let content = UNMutableNotificationContent()
-        content.title = "EHS Bell Schedule"
-        content.body = "Test notification - Your bell schedule notifications are working correctly! 🔔"
+        content.title = "EHS Schedule"
+        content.body = "Test notification - Your EHS schedule notifications are working correctly! 🔔"
         content.sound = .default
         content.badge = 1
         

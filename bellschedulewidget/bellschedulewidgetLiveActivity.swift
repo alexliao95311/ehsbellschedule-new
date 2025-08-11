@@ -65,7 +65,7 @@ struct BellScheduleLiveActivity: Widget {
         HStack(spacing: 12) {
             // Left side - Period info
             VStack(alignment: .leading, spacing: 4) {
-                Text("EHS Bell Schedule")
+                Text("EHS Schedule")
                     .font(.caption)
                     .foregroundColor(.secondary)
                 

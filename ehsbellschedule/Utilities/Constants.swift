@@ -25,16 +25,17 @@ struct Constants {
     
     // MARK: - Colors
     struct Colors {
-        static let primaryGreen = Color(red: 0.0, green: 0.4, blue: 0.2)        // Dark forest green
-        static let secondaryGreen = Color(red: 0.1, green: 0.6, blue: 0.3)      // Medium green
-        static let accentGreen = Color(red: 0.2, green: 0.7, blue: 0.4)         // Lighter green
+        // Dark Green Theme Colors
+        static let primaryGreen = Color(red: 0.0, green: 0.2, blue: 0.1)        // Very dark forest green
+        static let secondaryGreen = Color(red: 0.0, green: 0.3, blue: 0.15)      // Dark forest green  
+        static let accentGreen = Color(red: 0.1, green: 0.4, blue: 0.2)         // Medium dark green
         static let backgroundGray = Color(red: 0.95, green: 0.95, blue: 0.95)
         static let cardBackground = Color(red: 1.0, green: 1.0, blue: 1.0)
         static let textPrimary = Color(red: 0.1, green: 0.1, blue: 0.1)
         static let textSecondary = Color(red: 0.5, green: 0.5, blue: 0.5)
-        static let success = Color(red: 0.0, green: 0.6, blue: 0.2)
-        static let warning = Color(red: 0.9, green: 0.6, blue: 0.0)
-        static let error = Color(red: 0.9, green: 0.0, blue: 0.0)
+        static let success = Color(red: 0.2, green: 0.8, blue: 0.4)             // Bright success green
+        static let warning = Color(red: 1.0, green: 0.8, blue: 0.2)             // Bright warning yellow
+        static let error = Color(red: 1.0, green: 0.4, blue: 0.4)               // Bright error red
         
         // Legacy aliases for backward compatibility
         static let primaryBlue = primaryGreen

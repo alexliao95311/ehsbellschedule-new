@@ -9,8 +9,8 @@ import WidgetKit
 import AppIntents
 
 struct BellScheduleIntent: WidgetConfigurationIntent {
-    static var title: LocalizedStringResource { "Bell Schedule Configuration" }
-    static var description: IntentDescription { "Configure your bell schedule widget display options." }
+    static var title: LocalizedStringResource { "EHS Schedule Configuration" }
+    static var description: IntentDescription { "Configure your EHS schedule widget display options." }
 
     @Parameter(title: "Show 24-Hour Format", default: false)
     var use24HourFormat: Bool

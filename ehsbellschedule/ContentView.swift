@@ -11,31 +11,39 @@ import UIKit
 struct ContentView: View {
     @ObservedObject private var preferences = UserPreferences.shared
     @StateObject private var notificationService = NotificationService.shared
+    @State private var selectedTab = 0
     
     var body: some View {
-        TabView {
+        TabView(selection: $selectedTab) {
             ScheduleView()
                 .tabItem {
                     Image(systemName: "clock")
                     Text("Schedule")
                 }
+                .tag(0)
             
             InformationView()
                 .tabItem {
                     Image(systemName: "list.bullet")
                     Text("Info")
                 }
+                .tag(1)
             
             SettingsView()
                 .tabItem {
                     Image(systemName: "gear")
                     Text("Settings")
                 }
+                .tag(2)
         }
         .tint(Constants.Colors.primaryGreen)
         .onAppear {
             setupInitialState()
             setupTabBarAppearance()
+        }
+        .onChange(of: selectedTab) { newValue in
+            print("Tab changed to: \(newValue)")
+            updateTabBarAppearance()
         }
     }
     
@@ -101,27 +109,63 @@ struct ContentView: View {
     }
     
     private func setupTabBarAppearance() {
+        updateTabBarAppearance()
+    }
+    
+    private func updateTabBarAppearance() {
+        print("Updating tab bar appearance for tab: \(selectedTab)")
         let appearance = UITabBarAppearance()
         
-        // Configure background with green gradient effect
-        appearance.configureWithOpaqueBackground()
-        appearance.backgroundColor = UIColor(Constants.Colors.primaryGreen)
+        if selectedTab == 0 {
+            // Schedule tab - Green background with white text/icons
+            appearance.configureWithOpaqueBackground()
+            appearance.backgroundColor = UIColor(Constants.Colors.secondaryGreen)
+            
+            // Configure normal state (unselected) - white for contrast against green
+            appearance.stackedLayoutAppearance.normal.iconColor = UIColor.white.withAlphaComponent(0.7)
+            appearance.stackedLayoutAppearance.normal.titleTextAttributes = [
+                .foregroundColor: UIColor.white.withAlphaComponent(0.7)
+            ]
+            
+            // Configure selected state - bright white for active state
+            appearance.stackedLayoutAppearance.selected.iconColor = UIColor.white
+            appearance.stackedLayoutAppearance.selected.titleTextAttributes = [
+                .foregroundColor: UIColor.white
+            ]
+        } else {
+            // Info and Settings tabs - White background with black text/icons
+            appearance.configureWithOpaqueBackground()
+            appearance.backgroundColor = UIColor.white
+            
+            // Configure normal state (unselected) - dark gray
+            appearance.stackedLayoutAppearance.normal.iconColor = UIColor.black.withAlphaComponent(0.6)
+            appearance.stackedLayoutAppearance.normal.titleTextAttributes = [
+                .foregroundColor: UIColor.black.withAlphaComponent(0.6)
+            ]
+            
+            // Configure selected state - black for active state
+            appearance.stackedLayoutAppearance.selected.iconColor = UIColor.black
+            appearance.stackedLayoutAppearance.selected.titleTextAttributes = [
+                .foregroundColor: UIColor.black
+            ]
+        }
         
-        // Configure normal state (unselected) - white for contrast against green
-        appearance.stackedLayoutAppearance.normal.iconColor = UIColor.white.withAlphaComponent(0.7)
-        appearance.stackedLayoutAppearance.normal.titleTextAttributes = [
-            .foregroundColor: UIColor.white.withAlphaComponent(0.7)
-        ]
-        
-        // Configure selected state - bright white for active state
-        appearance.stackedLayoutAppearance.selected.iconColor = UIColor.white
-        appearance.stackedLayoutAppearance.selected.titleTextAttributes = [
-            .foregroundColor: UIColor.white
-        ]
-        
-        // Apply appearance
+        // Apply appearance globally
         UITabBar.appearance().standardAppearance = appearance
         UITabBar.appearance().scrollEdgeAppearance = appearance
+        
+        // Force update the current tab bar immediately
+        DispatchQueue.main.async {
+            if let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
+               let window = windowScene.windows.first {
+                if let tabBarController = window.rootViewController?.children.first as? UITabBarController {
+                    tabBarController.tabBar.standardAppearance = appearance
+                    tabBarController.tabBar.scrollEdgeAppearance = appearance
+                    tabBarController.tabBar.setNeedsLayout()
+                    tabBarController.tabBar.layoutIfNeeded()
+                }
+            }
+        }
     }
 }
 

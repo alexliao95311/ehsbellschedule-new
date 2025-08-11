@@ -43,7 +43,7 @@ struct BellScheduleControl: ControlWidget {
                 }
             }
         }
-        .displayName("Bell Schedule")
+        .displayName("EHS Schedule")
         .description("Quick access to your current class schedule and timing information.")
     }
 }
@@ -77,15 +77,15 @@ extension BellScheduleControl {
 }
 
 struct BellScheduleControlConfiguration: ControlConfigurationIntent {
-    static let title: LocalizedStringResource = "Bell Schedule Control Configuration"
+            static let title: LocalizedStringResource = "EHS Schedule Control Configuration"
 
     @Parameter(title: "Show Time Remaining", default: true)
     var showTimeRemaining: Bool
 }
 
 struct OpenScheduleAppIntent: AppIntent {
-    static let title: LocalizedStringResource = "Open Bell Schedule App"
-    static let description = IntentDescription("Opens the Bell Schedule app to view detailed schedule information.")
+            static let title: LocalizedStringResource = "Open EHS Schedule App"
+        static let description = IntentDescription("Opens the EHS Schedule app to view detailed schedule information.")
 
     func perform() async throws -> some IntentResult {
         // This intent will open the main app when the control is tapped

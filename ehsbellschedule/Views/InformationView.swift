@@ -13,6 +13,7 @@ struct InformationView: View {
                     LazyVStack(spacing: 12) {
                         ForEach(filteredPeriods, id: \.number) { period in
                             periodCard(for: period)
+                                .id("\(period.number)-\(preferences.use24HourFormat)")
                         }
                     }
                     .padding(.horizontal, Constants.Layout.padding)
@@ -198,12 +199,14 @@ struct ScheduleSummaryView: View {
                         title: "First Period",
                         value: TimeFormatter.shared.formatTime(firstPeriod.startDate, use24Hour: preferences.use24HourFormat)
                     )
+                    .id("first-time-\(preferences.use24HourFormat)")
                     
                     summaryRow(
                         icon: "sunset",
                         title: "Last Period Ends",
                         value: TimeFormatter.shared.formatTime(lastPeriod.endDate, use24Hour: preferences.use24HourFormat)
                     )
+                    .id("last-time-\(preferences.use24HourFormat)")
                 }
             }
         }

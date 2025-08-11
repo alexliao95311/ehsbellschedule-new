@@ -20,6 +20,7 @@ struct ScheduleView: View {
             .padding(.horizontal, Constants.Layout.padding)
             .padding(.top, 60)
         }
+        .id(preferences.use24HourFormat) // Force refresh when format changes
         .onAppear {
             scheduleViewModel.startTimer()
         }

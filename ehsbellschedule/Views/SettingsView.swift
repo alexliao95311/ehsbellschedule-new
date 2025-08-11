@@ -56,11 +56,11 @@ struct SettingsView: View {
     private var displaySettingsSection: some View {
         Section("Display") {
             Toggle("24-Hour Time Format", isOn: $preferences.use24HourFormat)
-                .tint(Constants.Colors.primaryBlue)
+                .tint(Constants.Colors.primaryGreen)
             
             HStack {
                 Image(systemName: "clock")
-                    .foregroundColor(Constants.Colors.primaryBlue)
+                    .foregroundColor(Constants.Colors.primaryGreen)
                     .frame(width: 24)
                 
                 VStack(alignment: .leading, spacing: 2) {
@@ -82,14 +82,14 @@ struct SettingsView: View {
     private var scheduleSettingsSection: some View {
         Section("Schedule") {
             Toggle("Show Period 0", isOn: $preferences.showPeriod0)
-                .tint(Constants.Colors.primaryBlue)
+                .tint(Constants.Colors.primaryGreen)
             
             Toggle("Show Period 7", isOn: $preferences.showPeriod7)
-                .tint(Constants.Colors.primaryBlue)
+                .tint(Constants.Colors.primaryGreen)
             
             HStack {
                 Image(systemName: "info.circle")
-                    .foregroundColor(Constants.Colors.primaryBlue)
+                    .foregroundColor(Constants.Colors.primaryGreen)
                     .frame(width: 24)
                 
                 VStack(alignment: .leading, spacing: 2) {
@@ -147,7 +147,7 @@ struct SettingsView: View {
                     }
                 }
                 .buttonStyle(.bordered)
-                .tint(Constants.Colors.primaryBlue)
+                .tint(Constants.Colors.primaryGreen)
             }
         }
     }
@@ -241,7 +241,7 @@ struct SettingsView: View {
             }) {
                 HStack {
                     Image(systemName: "pencil")
-                        .foregroundColor(Constants.Colors.primaryBlue)
+                        .foregroundColor(Constants.Colors.primaryGreen)
                         .frame(width: 24)
                     
                     VStack(alignment: .leading, spacing: 2) {
@@ -270,11 +270,11 @@ struct SettingsView: View {
         Section("About") {
             HStack {
                 Image(systemName: "info.circle")
-                    .foregroundColor(Constants.Colors.primaryBlue)
+                    .foregroundColor(Constants.Colors.primaryGreen)
                     .frame(width: 24)
                 
                 VStack(alignment: .leading, spacing: 2) {
-                    Text("EHS Bell Schedule")
+                    Text("EHS Schedule")
                         .font(Constants.Fonts.body)
                     
                     Text("Version 1.0.0")

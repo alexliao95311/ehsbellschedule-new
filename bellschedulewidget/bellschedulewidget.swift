@@ -298,7 +298,7 @@ struct LargeWidgetView: View {
             // Header
             HStack {
                 VStack(alignment: .leading, spacing: 4) {
-                    Text("EHS Bell Schedule")
+                    Text("EHS Schedule")
                         .font(.headline)
                         .fontWeight(.semibold)
                     
@@ -420,7 +420,7 @@ struct BellScheduleWidget: Widget {
             BellScheduleWidgetView(entry: entry)
                 .containerBackground(Color("WidgetBackground").gradient, for: .widget)
         }
-        .configurationDisplayName("Bell Schedule")
+        .configurationDisplayName("EHS Schedule")
         .description("Stay updated with your current class schedule and countdown timers.")
         .supportedFamilies([.systemSmall, .systemMedium, .systemLarge])
     }
