@@ -11,8 +11,40 @@ class NotificationService: ObservableObject {
     private let persistence = DataPersistenceService.shared
     
     private init() {
+        setupNotificationCategories()
         checkAuthorizationStatus()
         loadSettings()
+    }
+    
+    private func setupNotificationCategories() {
+        let classEndingAction = UNNotificationAction(
+            identifier: "VIEW_CLASS",
+            title: "View Class",
+            options: [.foreground]
+        )
+        
+        let passingPeriodAction = UNNotificationAction(
+            identifier: "VIEW_SCHEDULE",
+            title: "View Schedule",
+            options: [.foreground]
+        )
+        
+        let classEndingCategory = UNNotificationCategory(
+            identifier: Constants.NotificationCategories.classEnding,
+            actions: [classEndingAction],
+            intentIdentifiers: [],
+            options: []
+        )
+        
+        let passingPeriodCategory = UNNotificationCategory(
+            identifier: Constants.NotificationCategories.passingPeriod,
+            actions: [passingPeriodAction],
+            intentIdentifiers: [],
+            options: []
+        )
+        
+        center.setNotificationCategories([classEndingCategory, passingPeriodCategory])
+        print("✅ Notification categories set up")
     }
     
     // MARK: - Authorization
@@ -162,16 +194,24 @@ class NotificationService: ObservableObject {
     // MARK: - Test Notifications
     
     func sendTestNotification() async {
+        print("🔔 Starting test notification...")
+        
         // First ensure we have permission
         let settings = await center.notificationSettings()
+        print("📝 Notification settings:")
+        print("  - Authorization Status: \(settings.authorizationStatus.rawValue)")
+        print("  - Alert Setting: \(settings.alertSetting.rawValue)")
+        print("  - Sound Setting: \(settings.soundSetting.rawValue)")
+        print("  - Badge Setting: \(settings.badgeSetting.rawValue)")
         
         guard settings.authorizationStatus == .authorized else {
-            print("Notifications not authorized. Current status: \(settings.authorizationStatus)")
+            print("❌ Notifications not authorized. Current status: \(settings.authorizationStatus)")
             return
         }
         
         // Remove any existing test notifications
         center.removePendingNotificationRequests(withIdentifiers: ["test_notification"])
+        print("🗑️ Removed existing test notifications")
         
         let content = UNMutableNotificationContent()
         content.title = "EHS Bell Schedule"
@@ -179,20 +219,30 @@ class NotificationService: ObservableObject {
         content.sound = .default
         content.badge = 1
         
-        // Set trigger for 2 seconds to ensure it shows up
-        let trigger = UNTimeIntervalNotificationTrigger(timeInterval: 2, repeats: false)
+        // Set trigger for 1 second to ensure it shows up quickly
+        let trigger = UNTimeIntervalNotificationTrigger(timeInterval: 1, repeats: false)
         let request = UNNotificationRequest(identifier: "test_notification", content: content, trigger: trigger)
         
         do {
             try await center.add(request)
-            print("Test notification scheduled successfully")
+            print("✅ Test notification scheduled successfully for 1 second from now")
+            
+            // Check if it was actually scheduled
+            let pendingRequests = await center.pendingNotificationRequests()
+            let testRequest = pendingRequests.first { $0.identifier == "test_notification" }
+            if testRequest != nil {
+                print("✅ Confirmed: Test notification is in pending requests")
+            } else {
+                print("❌ Error: Test notification not found in pending requests")
+            }
             
             // Update the published authorization status
             await MainActor.run {
                 self.isAuthorized = true
             }
         } catch {
-            print("Error sending test notification: \(error)")
+            print("❌ Error sending test notification: \(error)")
+            print("Error details: \(error.localizedDescription)")
         }
     }
     
