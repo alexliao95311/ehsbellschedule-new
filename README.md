@@ -1,2 +1,2 @@
 # EHS Schedule
-The new Emerald High School Schedule App, written in Swift,
+The new Emerald High School Schedule App, written in Swift.
