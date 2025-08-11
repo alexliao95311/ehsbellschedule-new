@@ -4,13 +4,11 @@ class DataPersistenceService {
     static let shared = DataPersistenceService()
     
     private let userDefaults: UserDefaults
+    private let sharedUserDefaults: UserDefaults?
     
     private init() {
-        if let sharedDefaults = UserDefaults(suiteName: Constants.appGroupIdentifier) {
-            self.userDefaults = sharedDefaults
-        } else {
-            self.userDefaults = UserDefaults.standard
-        }
+        self.userDefaults = UserDefaults.standard
+        self.sharedUserDefaults = UserDefaults(suiteName: Constants.appGroupIdentifier)
     }
     
     // MARK: - Generic Storage Methods
@@ -97,10 +95,30 @@ class DataPersistenceService {
     // MARK: - Widget Data Sharing
     
     func saveWidgetData(_ data: WidgetData) {
+        // Save to shared UserDefaults for widget access
+        if let sharedDefaults = sharedUserDefaults {
+            do {
+                let encoded = try JSONEncoder().encode(data)
+                sharedDefaults.set(encoded, forKey: "widgetData")
+                sharedDefaults.synchronize()
+            } catch {
+                print("Failed to save widget data to shared UserDefaults: \(error)")
+            }
+        }
+        
+        // Also save to local UserDefaults as backup
         save(data, forKey: "widgetData")
     }
     
     func loadWidgetData() -> WidgetData? {
+        // Try to load from shared UserDefaults first
+        if let sharedDefaults = sharedUserDefaults,
+           let data = sharedDefaults.data(forKey: "widgetData"),
+           let widgetData = try? JSONDecoder().decode(WidgetData.self, from: data) {
+            return widgetData
+        }
+        
+        // Fall back to local UserDefaults
         return load(WidgetData.self, forKey: "widgetData")
     }
     
@@ -133,8 +151,12 @@ class DataPersistenceService {
 struct WidgetData: Codable {
     let currentPeriodName: String?
     let currentPeriodEndTime: Date?
+    let currentPeriodTeacher: String?
+    let currentPeriodRoom: String?
     let nextPeriodName: String?
     let nextPeriodStartTime: Date?
+    let nextPeriodTeacher: String?
+    let nextPeriodRoom: String?
     let scheduleStatus: String
     let lastUpdated: Date
     let timeRemaining: TimeInterval?
@@ -143,16 +165,24 @@ struct WidgetData: Codable {
     init(
         currentPeriodName: String? = nil,
         currentPeriodEndTime: Date? = nil,
+        currentPeriodTeacher: String? = nil,
+        currentPeriodRoom: String? = nil,
         nextPeriodName: String? = nil,
         nextPeriodStartTime: Date? = nil,
+        nextPeriodTeacher: String? = nil,
+        nextPeriodRoom: String? = nil,
         scheduleStatus: String,
         timeRemaining: TimeInterval? = nil,
         progress: Double? = nil
     ) {
         self.currentPeriodName = currentPeriodName
         self.currentPeriodEndTime = currentPeriodEndTime
+        self.currentPeriodTeacher = currentPeriodTeacher
+        self.currentPeriodRoom = currentPeriodRoom
         self.nextPeriodName = nextPeriodName
         self.nextPeriodStartTime = nextPeriodStartTime
+        self.nextPeriodTeacher = nextPeriodTeacher
+        self.nextPeriodRoom = nextPeriodRoom
         self.scheduleStatus = scheduleStatus
         self.lastUpdated = Date()
         self.timeRemaining = timeRemaining

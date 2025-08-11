@@ -109,6 +109,16 @@ struct SmallWidgetView: View {
                         .multilineTextAlignment(.center)
                         .lineLimit(2)
                     
+                    // Show teacher and room if available
+                    if let teacher = entry.widgetData.currentPeriodTeacher,
+                       let room = entry.widgetData.currentPeriodRoom {
+                        Text("\(teacher) • Room \(room)")
+                            .font(.caption2)
+                            .foregroundColor(.secondary)
+                            .multilineTextAlignment(.center)
+                            .lineLimit(1)
+                    }
+                    
                     Text(WidgetTimeFormatter.shared.formatCountdown(timeRemaining))
                         .font(.title2)
                         .fontWeight(.bold)
@@ -129,6 +139,16 @@ struct SmallWidgetView: View {
                         .fontWeight(.medium)
                         .multilineTextAlignment(.center)
                         .lineLimit(2)
+                    
+                    // Show teacher and room if available
+                    if let teacher = entry.widgetData.nextPeriodTeacher,
+                       let room = entry.widgetData.nextPeriodRoom {
+                        Text("\(teacher) • Room \(room)")
+                            .font(.caption2)
+                            .foregroundColor(.secondary)
+                            .multilineTextAlignment(.center)
+                            .lineLimit(1)
+                    }
                     
                     Text(WidgetTimeFormatter.shared.formatTime(startTime, use24Hour: entry.configuration.use24HourFormat))
                         .font(.headline)
@@ -206,6 +226,14 @@ struct MediumWidgetView: View {
                             .font(.headline)
                             .fontWeight(.semibold)
                         
+                        // Show teacher and room if available
+                        if let teacher = entry.widgetData.currentPeriodTeacher,
+                           let room = entry.widgetData.currentPeriodRoom {
+                            Text("\(teacher) • Room \(room)")
+                                .font(.caption)
+                                .foregroundColor(.secondary)
+                        }
+                        
                         HStack {
                             Text("Ends:")
                             Text(WidgetTimeFormatter.shared.formatTime(endTime, use24Hour: entry.configuration.use24HourFormat))
@@ -227,6 +255,14 @@ struct MediumWidgetView: View {
                         Text(nextPeriod)
                             .font(.headline)
                             .fontWeight(.semibold)
+                        
+                        // Show teacher and room if available
+                        if let teacher = entry.widgetData.nextPeriodTeacher,
+                           let room = entry.widgetData.nextPeriodRoom {
+                            Text("\(teacher) • Room \(room)")
+                                .font(.caption)
+                                .foregroundColor(.secondary)
+                        }
                         
                         Text(WidgetTimeFormatter.shared.formatTime(startTime, use24Hour: entry.configuration.use24HourFormat))
                             .font(.subheadline)
@@ -326,6 +362,15 @@ struct LargeWidgetView: View {
                         .fontWeight(.bold)
                         .multilineTextAlignment(.center)
                     
+                    // Show teacher and room if available
+                    if let teacher = entry.widgetData.currentPeriodTeacher,
+                       let room = entry.widgetData.currentPeriodRoom {
+                        Text("\(teacher) • Room \(room)")
+                            .font(.subheadline)
+                            .foregroundColor(.secondary)
+                            .multilineTextAlignment(.center)
+                    }
+                    
                     // Circular progress
                     ZStack {
                         Circle()
@@ -368,6 +413,14 @@ struct LargeWidgetView: View {
                             Text("Next: \(nextPeriod)")
                                 .font(.subheadline)
                                 .fontWeight(.medium)
+                            
+                            // Show teacher and room if available
+                            if let teacher = entry.widgetData.nextPeriodTeacher,
+                               let room = entry.widgetData.nextPeriodRoom {
+                                Text("\(teacher) • Room \(room)")
+                                    .font(.caption)
+                                    .foregroundColor(.secondary)
+                            }
                             
                             Text("at \(WidgetTimeFormatter.shared.formatTime(startTime, use24Hour: entry.configuration.use24HourFormat))")
                                 .font(.caption)

@@ -5,8 +5,12 @@ import Foundation
 struct WidgetData: Codable {
     let currentPeriodName: String?
     let currentPeriodEndTime: Date?
+    let currentPeriodTeacher: String?
+    let currentPeriodRoom: String?
     let nextPeriodName: String?
     let nextPeriodStartTime: Date?
+    let nextPeriodTeacher: String?
+    let nextPeriodRoom: String?
     let scheduleStatus: String
     let lastUpdated: Date
     let timeRemaining: TimeInterval?
@@ -15,16 +19,24 @@ struct WidgetData: Codable {
     init(
         currentPeriodName: String? = nil,
         currentPeriodEndTime: Date? = nil,
+        currentPeriodTeacher: String? = nil,
+        currentPeriodRoom: String? = nil,
         nextPeriodName: String? = nil,
         nextPeriodStartTime: Date? = nil,
+        nextPeriodTeacher: String? = nil,
+        nextPeriodRoom: String? = nil,
         scheduleStatus: String,
         timeRemaining: TimeInterval? = nil,
         progress: Double? = nil
     ) {
         self.currentPeriodName = currentPeriodName
         self.currentPeriodEndTime = currentPeriodEndTime
+        self.currentPeriodTeacher = currentPeriodTeacher
+        self.currentPeriodRoom = currentPeriodRoom
         self.nextPeriodName = nextPeriodName
         self.nextPeriodStartTime = nextPeriodStartTime
+        self.nextPeriodTeacher = nextPeriodTeacher
+        self.nextPeriodRoom = nextPeriodRoom
         self.scheduleStatus = scheduleStatus
         self.lastUpdated = Date()
         self.timeRemaining = timeRemaining
