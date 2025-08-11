@@ -7,6 +7,12 @@ struct CustomClassNamesView: View {
     @State private var editingClassInfo: [Int: ClassInfo] = [:]
     @State private var hasChanges = false
     
+    let onDismiss: (() -> Void)?
+    
+    init(onDismiss: (() -> Void)? = nil) {
+        self.onDismiss = onDismiss
+    }
+    
     var body: some View {
         NavigationView {
             List {
@@ -23,14 +29,14 @@ struct CustomClassNamesView: View {
             .toolbar {
                 ToolbarItem(placement: .navigationBarLeading) {
                     Button("Cancel") {
-                        dismiss()
+                        onDismiss?() ?? dismiss()
                     }
                 }
                 
                 ToolbarItem(placement: .navigationBarTrailing) {
                     Button("Save") {
                         saveChanges()
-                        dismiss()
+                        onDismiss?() ?? dismiss()
                     }
                     .fontWeight(.semibold)
                     .disabled(!hasChanges)
@@ -223,5 +229,5 @@ struct CustomClassNamesView: View {
 }
 
 #Preview {
-    CustomClassNamesView()
+    CustomClassNamesView(onDismiss: nil)
 }

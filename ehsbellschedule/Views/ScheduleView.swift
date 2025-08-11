@@ -21,8 +21,10 @@ struct ScheduleView: View {
                 }
                 .background(backgroundView)
                 
-                // Footer section (matching SettingsView style)
-                footerView
+                // Footer section (only show if no custom class names exist)
+                if !preferences.hasAnyCustomClassNames() {
+                    footerView
+                }
             }
         }
         .navigationViewStyle(.stack)
@@ -51,7 +53,9 @@ struct ScheduleView: View {
                     Divider()
                     
                     // The actual CustomClassNamesView content
-                    CustomClassNamesView()
+                    CustomClassNamesView(onDismiss: {
+                        showingCustomClassNames = false
+                    })
                         .navigationBarHidden(true)
                 }
             }

@@ -170,6 +170,24 @@ class UserPreferences: ObservableObject {
         customClassNames[periodNumber] = name.isEmpty ? nil : name
     }
     
+    func hasAnyCustomClassNames() -> Bool {
+        // Check if any custom class info exists and is not empty
+        for (_, classInfo) in customClassInfo {
+            if !classInfo.isEmpty {
+                return true
+            }
+        }
+        
+        // Check legacy custom class names for backward compatibility
+        for (_, name) in customClassNames {
+            if !name.isEmpty {
+                return true
+            }
+        }
+        
+        return false
+    }
+    
     func resetToDefaults() {
         use24HourFormat = false
         showPeriod0 = true
