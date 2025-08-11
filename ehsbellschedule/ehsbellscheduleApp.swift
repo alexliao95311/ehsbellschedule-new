@@ -18,7 +18,6 @@ struct ehsbellscheduleApp: App {
     
     var body: some Scene {
         WindowGroup {
-            print("🏗️ Building ContentView...")
             ContentView()
         }
     }
