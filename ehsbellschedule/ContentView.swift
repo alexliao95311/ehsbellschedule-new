@@ -63,17 +63,35 @@ struct ContentView: View {
     }
     
     private func updateWidgetData() {
+        print("🔄 ContentView: updateWidgetData() called")
         let calculator = ScheduleCalculator.shared
         let status = calculator.getScheduleStatus()
         
+        print("📅 Schedule status: \(status)")
+        
+        // Check if it's a school day
+        let isSchoolDay = calculator.isSchoolDay()
+        print("🏫 Is school day: \(isSchoolDay)")
+        
         let widgetData = createWidgetData(from: status)
+        print("📱 Created widget data: \(widgetData.scheduleStatus)")
+        print("   Current period: \(widgetData.currentPeriodName ?? "nil")")
+        print("   Teacher: \(widgetData.currentPeriodTeacher ?? "nil")")
+        print("   Room: \(widgetData.currentPeriodRoom ?? "nil")")
+        print("   Next period: \(widgetData.nextPeriodName ?? "nil")")
+        print("   Time remaining: \(widgetData.timeRemaining ?? 0)")
+        
         DataPersistenceService.shared.saveWidgetData(widgetData)
+        print("💾 Widget data saved via DataPersistenceService")
     }
     
     private func createWidgetData(from status: ScheduleStatus) -> WidgetData {
+        print("🔧 Creating widget data for status: \(status)")
+        
         switch status {
         case .inClass(let period, let timeRemaining, let progress):
             let classInfo = preferences.getClassInfo(for: period)
+            print("   📚 In class: \(classInfo.displayName), Teacher: \(classInfo.teacher), Room: \(classInfo.room)")
             return WidgetData(
                 currentPeriodName: classInfo.displayName,
                 currentPeriodEndTime: period.endDate,
@@ -86,6 +104,7 @@ struct ContentView: View {
             
         case .passingPeriod(let nextPeriod, let timeUntilNext):
             let classInfo = preferences.getClassInfo(for: nextPeriod)
+            print("   🚶 Passing period: Next class \(classInfo.displayName), Teacher: \(classInfo.teacher), Room: \(classInfo.room)")
             return WidgetData(
                 nextPeriodName: classInfo.displayName,
                 nextPeriodStartTime: nextPeriod.startDate,
@@ -97,6 +116,7 @@ struct ContentView: View {
             
         case .beforeSchool(let nextPeriod, let timeUntilNext):
             let classInfo = preferences.getClassInfo(for: nextPeriod)
+            print("   🌅 Before school: Next class \(classInfo.displayName), Teacher: \(classInfo.teacher), Room: \(classInfo.room)")
             return WidgetData(
                 nextPeriodName: classInfo.displayName,
                 nextPeriodStartTime: nextPeriod.startDate,
@@ -107,9 +127,11 @@ struct ContentView: View {
             )
             
         case .afterSchool:
+            print("   🌆 After school")
             return WidgetData(scheduleStatus: "After School")
             
         case .noSchool:
+            print("   🏠 No school today")
             return WidgetData(scheduleStatus: "No School")
         }
     }
