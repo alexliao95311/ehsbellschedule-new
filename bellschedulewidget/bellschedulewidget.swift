@@ -35,12 +35,12 @@ struct BellScheduleProvider: AppIntentTimelineProvider {
         // Create multiple entries for very frequent updates
         var entries: [BellScheduleEntry] = []
         
-        // Update every 10 seconds during school hours, every 30 seconds otherwise
+        // Update every 5 seconds during school hours, every 15 seconds otherwise
         let isActiveTime = isSchoolActiveTime(currentDate)
-        let updateInterval: TimeInterval = isActiveTime ? 10 : 30
+        let updateInterval: TimeInterval = isActiveTime ? 5 : 15
         
-        // Create entries for the next 20 updates (more frequent)
-        for i in 0..<20 {
+        // Create entries for the next 30 updates (more frequent)
+        for i in 0..<30 {
             let entryDate = Calendar.current.date(byAdding: .second, value: Int(updateInterval * Double(i)), to: currentDate) ?? currentDate
             
             // Fetch fresh data for each entry to ensure accuracy
@@ -65,6 +65,11 @@ struct BellScheduleProvider: AppIntentTimelineProvider {
         
         // Monday through Friday, 7 AM to 4 PM
         return weekday >= 2 && weekday <= 6 && hour >= 7 && hour <= 16
+    }
+    
+    // Add a method to force refresh
+    func recommendations() -> [IntentRecommendation<BellScheduleIntent>] {
+        return []
     }
 }
 
@@ -350,7 +355,7 @@ struct MediumWidgetView: View {
                             
                             Text("\(Int(progress * 100))% complete")
                                 .font(.caption2)
-                                .foregroundColor(.white.opacity(0.7))
+                                .foregroundColor(.white)
                         }
                     }
                     
@@ -541,11 +546,12 @@ struct BellScheduleWidget: Widget {
     var body: some WidgetConfiguration {
         AppIntentConfiguration(kind: kind, intent: BellScheduleIntent.self, provider: BellScheduleProvider()) { entry in
             BellScheduleWidgetView(entry: entry)
-                .containerBackground(Color("WidgetBackground").gradient, for: .widget)
         }
         .configurationDisplayName("EHS Schedule")
         .description("Stay updated with your current class schedule and countdown timers.")
         .supportedFamilies([.systemSmall, .systemMedium, .systemLarge])
+        .contentMarginsDisabled()
+        .widgetURL(URL(string: "ehsbellschedule://"))
     }
 }
 
