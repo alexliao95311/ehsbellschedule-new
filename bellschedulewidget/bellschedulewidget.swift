@@ -66,11 +66,6 @@ struct BellScheduleProvider: AppIntentTimelineProvider {
         // Monday through Friday, 7 AM to 4 PM
         return weekday >= 2 && weekday <= 6 && hour >= 7 && hour <= 16
     }
-    
-    // Add a method to force refresh
-    func recommendations() -> [IntentRecommendation<BellScheduleIntent>] {
-        return []
-    }
 }
 
 // MARK: - Timeline Entry
@@ -551,7 +546,6 @@ struct BellScheduleWidget: Widget {
         .description("Stay updated with your current class schedule and countdown timers.")
         .supportedFamilies([.systemSmall, .systemMedium, .systemLarge])
         .contentMarginsDisabled()
-        .widgetURL(URL(string: "ehsbellschedule://"))
     }
 }
 
