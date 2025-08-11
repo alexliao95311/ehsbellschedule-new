@@ -6,6 +6,12 @@
 	objectVersion = 77;
 	objects = {
 
+/* Begin PBXBuildFile section */
+		2A99834F2E49A62A000CC8D7 /* WidgetKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2A9983302E49A5B9000CC8D7 /* WidgetKit.framework */; };
+		2A9983502E49A62A000CC8D7 /* SwiftUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2A9983322E49A5BA000CC8D7 /* SwiftUI.framework */; };
+		2A9983612E49A62C000CC8D7 /* bellschedulewidgetExtension.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = 2A99834E2E49A62A000CC8D7 /* bellschedulewidgetExtension.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+/* End PBXBuildFile section */
+
 /* Begin PBXContainerItemProxy section */
 		2A99830E2E49A570000CC8D7 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -21,13 +27,47 @@
 			remoteGlobalIDString = 2A9982FC2E49A56F000CC8D7;
 			remoteInfo = ehsbellschedule;
 		};
+		2A99835F2E49A62C000CC8D7 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 2A9982F52E49A56F000CC8D7 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 2A99834D2E49A62A000CC8D7;
+			remoteInfo = bellschedulewidgetExtension;
+		};
 /* End PBXContainerItemProxy section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		2A9983492E49A5BE000CC8D7 /* Embed Foundation Extensions */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 13;
+			files = (
+				2A9983612E49A62C000CC8D7 /* bellschedulewidgetExtension.appex in Embed Foundation Extensions */,
+			);
+			name = "Embed Foundation Extensions";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
 		2A9982FD2E49A56F000CC8D7 /* ehsbellschedule.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = ehsbellschedule.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		2A99830D2E49A570000CC8D7 /* ehsbellscheduleTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = ehsbellscheduleTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		2A9983172E49A570000CC8D7 /* ehsbellscheduleUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = ehsbellscheduleUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		2A9983302E49A5B9000CC8D7 /* WidgetKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = WidgetKit.framework; path = System/Library/Frameworks/WidgetKit.framework; sourceTree = SDKROOT; };
+		2A9983322E49A5BA000CC8D7 /* SwiftUI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SwiftUI.framework; path = System/Library/Frameworks/SwiftUI.framework; sourceTree = SDKROOT; };
+		2A99834E2E49A62A000CC8D7 /* bellschedulewidgetExtension.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = bellschedulewidgetExtension.appex; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
+
+/* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
+		2A9983622E49A62C000CC8D7 /* Exceptions for "bellschedulewidget" folder in "bellschedulewidgetExtension" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				Info.plist,
+			);
+			target = 2A99834D2E49A62A000CC8D7 /* bellschedulewidgetExtension */;
+		};
+/* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
 		2A9982FF2E49A56F000CC8D7 /* ehsbellschedule */ = {
@@ -43,6 +83,19 @@
 		2A99831A2E49A570000CC8D7 /* ehsbellscheduleUITests */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
 			path = ehsbellscheduleUITests;
+			sourceTree = "<group>";
+		};
+		2A9983342E49A5BA000CC8D7 /* widget */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			path = widget;
+			sourceTree = "<group>";
+		};
+		2A9983512E49A62A000CC8D7 /* bellschedulewidget */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+				2A9983622E49A62C000CC8D7 /* Exceptions for "bellschedulewidget" folder in "bellschedulewidgetExtension" target */,
+			);
+			path = bellschedulewidget;
 			sourceTree = "<group>";
 		};
 /* End PBXFileSystemSynchronizedRootGroup section */
@@ -69,6 +122,15 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		2A99834B2E49A62A000CC8D7 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				2A9983502E49A62A000CC8D7 /* SwiftUI.framework in Frameworks */,
+				2A99834F2E49A62A000CC8D7 /* WidgetKit.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
@@ -78,6 +140,9 @@
 				2A9982FF2E49A56F000CC8D7 /* ehsbellschedule */,
 				2A9983102E49A570000CC8D7 /* ehsbellscheduleTests */,
 				2A99831A2E49A570000CC8D7 /* ehsbellscheduleUITests */,
+				2A9983342E49A5BA000CC8D7 /* widget */,
+				2A9983512E49A62A000CC8D7 /* bellschedulewidget */,
+				2A99832F2E49A5B9000CC8D7 /* Frameworks */,
 				2A9982FE2E49A56F000CC8D7 /* Products */,
 			);
 			sourceTree = "<group>";
@@ -88,8 +153,18 @@
 				2A9982FD2E49A56F000CC8D7 /* ehsbellschedule.app */,
 				2A99830D2E49A570000CC8D7 /* ehsbellscheduleTests.xctest */,
 				2A9983172E49A570000CC8D7 /* ehsbellscheduleUITests.xctest */,
+				2A99834E2E49A62A000CC8D7 /* bellschedulewidgetExtension.appex */,
 			);
 			name = Products;
+			sourceTree = "<group>";
+		};
+		2A99832F2E49A5B9000CC8D7 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				2A9983302E49A5B9000CC8D7 /* WidgetKit.framework */,
+				2A9983322E49A5BA000CC8D7 /* SwiftUI.framework */,
+			);
+			name = Frameworks;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -102,10 +177,12 @@
 				2A9982F92E49A56F000CC8D7 /* Sources */,
 				2A9982FA2E49A56F000CC8D7 /* Frameworks */,
 				2A9982FB2E49A56F000CC8D7 /* Resources */,
+				2A9983492E49A5BE000CC8D7 /* Embed Foundation Extensions */,
 			);
 			buildRules = (
 			);
 			dependencies = (
+				2A9983602E49A62C000CC8D7 /* PBXTargetDependency */,
 			);
 			fileSystemSynchronizedGroups = (
 				2A9982FF2E49A56F000CC8D7 /* ehsbellschedule */,
@@ -163,6 +240,28 @@
 			productReference = 2A9983172E49A570000CC8D7 /* ehsbellscheduleUITests.xctest */;
 			productType = "com.apple.product-type.bundle.ui-testing";
 		};
+		2A99834D2E49A62A000CC8D7 /* bellschedulewidgetExtension */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 2A9983632E49A62C000CC8D7 /* Build configuration list for PBXNativeTarget "bellschedulewidgetExtension" */;
+			buildPhases = (
+				2A99834A2E49A62A000CC8D7 /* Sources */,
+				2A99834B2E49A62A000CC8D7 /* Frameworks */,
+				2A99834C2E49A62A000CC8D7 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			fileSystemSynchronizedGroups = (
+				2A9983512E49A62A000CC8D7 /* bellschedulewidget */,
+			);
+			name = bellschedulewidgetExtension;
+			packageProductDependencies = (
+			);
+			productName = bellschedulewidgetExtension;
+			productReference = 2A99834E2E49A62A000CC8D7 /* bellschedulewidgetExtension.appex */;
+			productType = "com.apple.product-type.app-extension";
+		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
@@ -184,6 +283,9 @@
 						CreatedOnToolsVersion = 16.1;
 						TestTargetID = 2A9982FC2E49A56F000CC8D7;
 					};
+					2A99834D2E49A62A000CC8D7 = {
+						CreatedOnToolsVersion = 16.1;
+					};
 				};
 			};
 			buildConfigurationList = 2A9982F82E49A56F000CC8D7 /* Build configuration list for PBXProject "ehsbellschedule" */;
@@ -203,6 +305,7 @@
 				2A9982FC2E49A56F000CC8D7 /* ehsbellschedule */,
 				2A99830C2E49A570000CC8D7 /* ehsbellscheduleTests */,
 				2A9983162E49A570000CC8D7 /* ehsbellscheduleUITests */,
+				2A99834D2E49A62A000CC8D7 /* bellschedulewidgetExtension */,
 			);
 		};
 /* End PBXProject section */
@@ -223,6 +326,13 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 		2A9983152E49A570000CC8D7 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		2A99834C2E49A62A000CC8D7 /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -253,6 +363,13 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		2A99834A2E49A62A000CC8D7 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
@@ -265,6 +382,11 @@
 			isa = PBXTargetDependency;
 			target = 2A9982FC2E49A56F000CC8D7 /* ehsbellschedule */;
 			targetProxy = 2A9983182E49A570000CC8D7 /* PBXContainerItemProxy */;
+		};
+		2A9983602E49A62C000CC8D7 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 2A99834D2E49A62A000CC8D7 /* bellschedulewidgetExtension */;
+			targetProxy = 2A99835F2E49A62C000CC8D7 /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
 
@@ -518,6 +640,60 @@
 			};
 			name = Release;
 		};
+		2A9983642E49A62C000CC8D7 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				ASSETCATALOG_COMPILER_WIDGET_BACKGROUND_COLOR_NAME = WidgetBackground;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = 6D98SX8URG;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = bellschedulewidget/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = bellschedulewidget;
+				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = club.ehsprogramming.ehsbellschedule.bellschedulewidget;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		2A9983652E49A62C000CC8D7 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				ASSETCATALOG_COMPILER_WIDGET_BACKGROUND_COLOR_NAME = WidgetBackground;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = 6D98SX8URG;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = bellschedulewidget/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = bellschedulewidget;
+				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = club.ehsprogramming.ehsbellschedule.bellschedulewidget;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
@@ -553,6 +729,15 @@
 			buildConfigurations = (
 				2A9983282E49A570000CC8D7 /* Debug */,
 				2A9983292E49A570000CC8D7 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		2A9983632E49A62C000CC8D7 /* Build configuration list for PBXNativeTarget "bellschedulewidgetExtension" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				2A9983642E49A62C000CC8D7 /* Debug */,
+				2A9983652E49A62C000CC8D7 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
