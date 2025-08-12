@@ -43,12 +43,7 @@ struct ScheduleView: View {
                         .ignoresSafeArea()
                 )
         } else {
-            LinearGradient(
-                colors: [Constants.Colors.primaryGreen, Constants.Colors.secondaryGreen, Constants.Colors.accentGreen],
-                startPoint: .topLeading,
-                endPoint: .bottomTrailing
-            )
-            .ignoresSafeArea()
+            Constants.Colors.backgroundGray.ignoresSafeArea()
         }
     }
     
@@ -58,7 +53,7 @@ struct ScheduleView: View {
         VStack(spacing: 4) {
             Text(scheduleViewModel.currentDateString)
                 .font(Constants.Fonts.headline)
-                .foregroundColor(.white)
+                .foregroundColor(Constants.Colors.primaryGreen)
                 .fontWeight(.medium)
         }
     }
@@ -91,16 +86,16 @@ struct ScheduleView: View {
         VStack(spacing: 16) {
             Image(systemName: "calendar.badge.exclamationmark")
                 .font(.system(size: 60))
-                .foregroundColor(.white)
+                .foregroundColor(Constants.Colors.primaryGreen)
             
             Text("No School Today")
                 .font(Constants.Fonts.largeTitle)
-                .foregroundColor(.white)
+                .foregroundColor(Constants.Colors.primaryGreen)
                 .fontWeight(.bold)
             
             Text("Enjoy your weekend!")
                 .font(Constants.Fonts.body)
-                .foregroundColor(.white.opacity(0.8))
+                .foregroundColor(Constants.Colors.primaryGreen.opacity(0.8))
         }
         .padding(.vertical, 40)
     }
@@ -109,34 +104,34 @@ struct ScheduleView: View {
         VStack(spacing: 20) {
             Image(systemName: "sunrise")
                 .font(.system(size: 50))
-                .foregroundColor(.white)
+                .foregroundColor(Constants.Colors.primaryGreen)
             
             Text("School starts in")
                 .font(Constants.Fonts.headline)
-                .foregroundColor(.white.opacity(0.9))
+                .foregroundColor(Constants.Colors.primaryGreen.opacity(0.9))
             
             Text(TimeFormatter.shared.formatCountdown(timeUntilNext))
                 .font(Constants.Fonts.countdown)
-                .foregroundColor(.white)
+                .foregroundColor(Constants.Colors.primaryGreen)
                 .fontWeight(.bold)
                 .monospacedDigit()
             
             VStack(spacing: 4) {
                 Text("Next Period:")
                     .font(Constants.Fonts.body)
-                    .foregroundColor(.white.opacity(0.7))
+                    .foregroundColor(Constants.Colors.primaryGreen.opacity(0.7))
                 
                 let nextClassInfo = preferences.getClassInfo(for: nextPeriod)
                 
                 Text(nextClassInfo.displayName)
                     .font(Constants.Fonts.title)
-                    .foregroundColor(.white)
+                    .foregroundColor(Constants.Colors.primaryGreen)
                     .fontWeight(.semibold)
                 
                 if nextClassInfo.hasDetails {
                     Text(nextClassInfo.detailsText)
                         .font(Constants.Fonts.body)
-                        .foregroundColor(.white.opacity(0.7))
+                        .foregroundColor(Constants.Colors.primaryGreen.opacity(0.7))
                 }
                 
                 Text(TimeFormatter.shared.formatTimeRange(
@@ -145,7 +140,7 @@ struct ScheduleView: View {
                     use24Hour: preferences.use24HourFormat
                 ))
                 .font(Constants.Fonts.body)
-                .foregroundColor(.white.opacity(0.8))
+                .foregroundColor(Constants.Colors.primaryGreen.opacity(0.8))
             }
         }
         .padding(.vertical, 20)
@@ -159,14 +154,14 @@ struct ScheduleView: View {
                 
                 Text(classInfo.displayName)
                     .font(Constants.Fonts.largeTitle)
-                    .foregroundColor(.white)
+                    .foregroundColor(Constants.Colors.primaryGreen)
                     .fontWeight(.bold)
                     .multilineTextAlignment(.center)
                 
                 if classInfo.hasDetails {
                     Text(classInfo.detailsText)
                         .font(Constants.Fonts.body)
-                        .foregroundColor(.white.opacity(0.8))
+                        .foregroundColor(Constants.Colors.primaryGreen.opacity(0.8))
                         .multilineTextAlignment(.center)
                 }
             }
@@ -175,13 +170,13 @@ struct ScheduleView: View {
             ZStack {
                 // Background circle
                 Circle()
-                    .stroke(Color.white.opacity(0.3), lineWidth: 8)
+                    .stroke(Constants.Colors.primaryGreen.opacity(0.3), lineWidth: 8)
                     .frame(width: 200, height: 200)
                 
                 // Progress circle
                 Circle()
                     .trim(from: 0, to: progress)
-                    .stroke(Color.white, style: StrokeStyle(lineWidth: 8, lineCap: .round))
+                    .stroke(Constants.Colors.primaryGreen, style: StrokeStyle(lineWidth: 8, lineCap: .round))
                     .frame(width: 200, height: 200)
                     .rotationEffect(.degrees(-90))
                     .animation(Constants.Animation.smooth, value: progress)
@@ -190,13 +185,13 @@ struct ScheduleView: View {
                 VStack(spacing: 4) {
                     Text(TimeFormatter.shared.formatCountdown(timeRemaining))
                         .font(Constants.Fonts.countdown)
-                        .foregroundColor(.white)
+                        .foregroundColor(Constants.Colors.primaryGreen)
                         .fontWeight(.bold)
                         .monospacedDigit()
                     
                     Text("remaining")
                         .font(Constants.Fonts.caption)
-                        .foregroundColor(.white.opacity(0.7))
+                        .foregroundColor(Constants.Colors.primaryGreen.opacity(0.7))
                 }
             }
             
@@ -207,7 +202,7 @@ struct ScheduleView: View {
                 use24Hour: preferences.use24HourFormat
             ))
             .font(Constants.Fonts.headline)
-            .foregroundColor(.white.opacity(0.9))
+            .foregroundColor(Constants.Colors.primaryGreen.opacity(0.9))
         }
     }
     
@@ -215,40 +210,40 @@ struct ScheduleView: View {
         VStack(spacing: 20) {
             Image(systemName: "figure.walk")
                 .font(.system(size: 50))
-                .foregroundColor(.white)
+                .foregroundColor(Constants.Colors.primaryGreen)
             
             Text("Passing Period")
                 .font(Constants.Fonts.largeTitle)
-                .foregroundColor(.white)
+                .foregroundColor(Constants.Colors.primaryGreen)
                 .fontWeight(.bold)
             
             Text("Next class in")
                 .font(Constants.Fonts.headline)
-                .foregroundColor(.white.opacity(0.9))
+                .foregroundColor(Constants.Colors.primaryGreen.opacity(0.9))
             
             Text(TimeFormatter.shared.formatCountdown(timeUntilNext))
                 .font(Constants.Fonts.countdown)
-                .foregroundColor(.white)
+                .foregroundColor(Constants.Colors.primaryGreen)
                 .fontWeight(.bold)
                 .monospacedDigit()
             
             VStack(spacing: 4) {
                 Text("Up Next:")
                     .font(Constants.Fonts.body)
-                    .foregroundColor(.white.opacity(0.7))
+                    .foregroundColor(Constants.Colors.primaryGreen.opacity(0.7))
                 
                 let nextClassInfo = preferences.getClassInfo(for: nextPeriod)
                 
                 Text(nextClassInfo.displayName)
                     .font(Constants.Fonts.title)
-                    .foregroundColor(.white)
+                    .foregroundColor(Constants.Colors.primaryGreen)
                     .fontWeight(.semibold)
                     .multilineTextAlignment(.center)
                 
                 if nextClassInfo.hasDetails {
                     Text(nextClassInfo.detailsText)
                         .font(Constants.Fonts.body)
-                        .foregroundColor(.white.opacity(0.7))
+                        .foregroundColor(Constants.Colors.primaryGreen.opacity(0.7))
                         .multilineTextAlignment(.center)
                 }
             }
@@ -260,16 +255,16 @@ struct ScheduleView: View {
         VStack(spacing: 16) {
             Image(systemName: "sunset")
                 .font(.system(size: 60))
-                .foregroundColor(.white)
+                .foregroundColor(Constants.Colors.primaryGreen)
             
             Text("School's Out!")
                 .font(Constants.Fonts.largeTitle)
-                .foregroundColor(.white)
+                .foregroundColor(Constants.Colors.primaryGreen)
                 .fontWeight(.bold)
             
             Text("Have a great rest of your day!")
                 .font(Constants.Fonts.body)
-                .foregroundColor(.white.opacity(0.8))
+                .foregroundColor(Constants.Colors.primaryGreen.opacity(0.8))
                 .multilineTextAlignment(.center)
         }
         .padding(.vertical, 40)
@@ -283,7 +278,7 @@ struct ScheduleView: View {
             VStack(alignment: .leading, spacing: 12) {
                 Text("Upcoming Classes")
                     .font(Constants.Fonts.headline)
-                    .foregroundColor(.white)
+                    .foregroundColor(Constants.Colors.primaryGreen)
                     .fontWeight(.semibold)
                     .padding(.horizontal, 16)
                     .padding(.top, 16)
@@ -301,7 +296,7 @@ struct ScheduleView: View {
             }
             .background(
                 RoundedRectangle(cornerRadius: Constants.Layout.cornerRadius)
-                    .fill(Color.white.opacity(0.15))
+                    .fill(Constants.Colors.primaryGreen.opacity(0.15))
             )
             .padding(.bottom, 40) // Reduced bottom padding
         }
@@ -314,32 +309,32 @@ struct ScheduleView: View {
                 
                 Text(classInfo.displayName)
                     .font(Constants.Fonts.body)
-                    .foregroundColor(.white)
+                    .foregroundColor(Constants.Colors.primaryGreen)
                     .fontWeight(.medium)
                 
                 if classInfo.hasDetails {
                     Text(classInfo.detailsText)
                         .font(Constants.Fonts.caption)
-                        .foregroundColor(.white.opacity(0.6))
+                        .foregroundColor(Constants.Colors.primaryGreen.opacity(0.6))
                 }
                 
                 Text(period.displayName)
                     .font(Constants.Fonts.caption)
-                    .foregroundColor(.white.opacity(0.7))
+                    .foregroundColor(Constants.Colors.primaryGreen.opacity(0.7))
             }
             
             Spacer()
             
             Text(TimeFormatter.shared.formatTime(period.startDate, use24Hour: preferences.use24HourFormat))
                 .font(Constants.Fonts.body)
-                .foregroundColor(.white.opacity(0.9))
+                .foregroundColor(Constants.Colors.primaryGreen.opacity(0.9))
                 .fontWeight(.medium)
         }
         .padding(.horizontal, 12)
         .padding(.vertical, 8)
         .background(
             RoundedRectangle(cornerRadius: 8)
-                .fill(Color.white.opacity(0.1))
+                .fill(Constants.Colors.primaryGreen.opacity(0.1))
         )
     }
 }
