@@ -115,15 +115,14 @@ class ScheduleViewModel: ObservableObject {
                 timeRemaining: timeUntilNext
             )
             
-        case .beforeSchool(let nextPeriod, let timeUntilNext):
+        case .beforeSchool(let nextPeriod, _):
             let classInfo = preferences.getClassInfo(for: nextPeriod)
             return WidgetData(
                 nextPeriodName: classInfo.displayName,
                 nextPeriodStartTime: nextPeriod.startDate,
                 nextPeriodTeacher: classInfo.teacher.isEmpty ? nil : classInfo.teacher,
                 nextPeriodRoom: classInfo.room.isEmpty ? nil : classInfo.room,
-                scheduleStatus: "Before School",
-                timeRemaining: timeUntilNext
+                scheduleStatus: "Before School"
             )
             
         case .afterSchool:

@@ -481,6 +481,10 @@ struct LargeWidgetView: View {
     
     var body: some View {
         VStack(spacing: 16) {
+            // Top margin for better centering
+            Spacer()
+                .frame(height: 8)
+            
             // Header - Status badge only
             HStack {
                 Text(entry.widgetData.scheduleStatus)
@@ -495,12 +499,12 @@ struct LargeWidgetView: View {
                 Spacer()
             }
             
-            // Main content area
+            // Main content area - centered
             if let currentPeriod = entry.widgetData.currentPeriodName,
                let timeRemaining = entry.widgetData.timeRemaining,
                let endTime = entry.widgetData.currentPeriodEndTime {
                 // Currently in class view
-                VStack(spacing: 16) {
+                VStack(spacing: 20) {
                     Text(currentPeriod)
                         .font(.title)
                         .fontWeight(.bold)
@@ -542,6 +546,7 @@ struct LargeWidgetView: View {
                             .monospacedDigit()
                     }
                 }
+                .frame(maxWidth: .infinity)
                 
             } else {
                 // No active class view
@@ -556,18 +561,20 @@ struct LargeWidgetView: View {
                         .foregroundColor(.white)
                         .multilineTextAlignment(.center)
                 }
+                .frame(maxWidth: .infinity)
             }
             
-            // Always show next class section if available
+            // Show next class section if available
             if let nextPeriod = entry.widgetData.nextPeriodName,
                let startTime = entry.widgetData.nextPeriodStartTime {
-                VStack(spacing: 12) {
+                VStack(spacing: 16) {
+                    // Divider line
                     Rectangle()
                         .fill(Color.white.opacity(0.2))
                         .frame(height: 1)
                         .padding(.horizontal, 20)
                     
-                    VStack(spacing: 8) {
+                    VStack(spacing: 12) {
                         Text("Next Class")
                             .font(.headline)
                             .fontWeight(.semibold)
@@ -702,17 +709,17 @@ struct BellScheduleWidget: Widget {
         date: .now,
         configuration: BellScheduleIntent(),
         widgetData: WidgetData(
-            currentPeriodName: "Mathematics",
-            currentPeriodEndTime: Date().addingTimeInterval(15 * 60),
-            currentPeriodTeacher: "Smith",
-            currentPeriodRoom: "A105",
-            nextPeriodName: "Biology",
-            nextPeriodStartTime: Date().addingTimeInterval(20 * 60),
-            nextPeriodTeacher: "Davis",
-            nextPeriodRoom: "B203",
+            currentPeriodName: "AP Physics C",
+            currentPeriodEndTime: Date().addingTimeInterval(25 * 60),
+            currentPeriodTeacher: "Casavant",
+            currentPeriodRoom: "F304",
+            nextPeriodName: "English Literature",
+            nextPeriodStartTime: Date().addingTimeInterval(30 * 60),
+            nextPeriodTeacher: "Johnson",
+            nextPeriodRoom: "E201",
             scheduleStatus: "In Class",
-            timeRemaining: 15 * 60,
-            progress: 0.6
+            timeRemaining: 25 * 60,
+            progress: 0.7
         )
     )
 }

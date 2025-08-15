@@ -27,12 +27,30 @@ class ScheduleCalculator {
     
     func getCurrentPeriod(at date: Date = Date()) -> Period? {
         let schedule = getCurrentSchedule(for: date)
-        return schedule.getCurrentPeriod(at: date)
+        let preferences = UserPreferences.shared
+        let filteredPeriods = schedule.filteredPeriods(
+            showPeriod0: preferences.showPeriod0,
+            showPeriod7: preferences.showPeriod7
+        )
+        
+        let timeInterval = date.timeIntervalSinceReferenceDate
+        return filteredPeriods.first { period in
+            timeInterval >= period.startTime && timeInterval < period.endTime
+        }
     }
     
     func getNextPeriod(at date: Date = Date()) -> Period? {
         let schedule = getCurrentSchedule(for: date)
-        return schedule.getNextPeriod(at: date)
+        let preferences = UserPreferences.shared
+        let filteredPeriods = schedule.filteredPeriods(
+            showPeriod0: preferences.showPeriod0,
+            showPeriod7: preferences.showPeriod7
+        )
+        
+        let timeInterval = date.timeIntervalSinceReferenceDate
+        return filteredPeriods.first { period in
+            period.startTime > timeInterval
+        }
     }
     
     func isSchoolDay(date: Date = Date()) -> Bool {
@@ -48,11 +66,16 @@ class ScheduleCalculator {
     
     func isInPassingPeriod(at date: Date = Date()) -> Bool {
         let schedule = getCurrentSchedule(for: date)
+        let preferences = UserPreferences.shared
+        let filteredPeriods = schedule.filteredPeriods(
+            showPeriod0: preferences.showPeriod0,
+            showPeriod7: preferences.showPeriod7
+        )
         let timeInterval = date.timeIntervalSinceReferenceDate
         
-        for i in 0..<schedule.periods.count - 1 {
-            let currentPeriodEnd = schedule.periods[i].endTime
-            let nextPeriodStart = schedule.periods[i + 1].startTime
+        for i in 0..<filteredPeriods.count - 1 {
+            let currentPeriodEnd = filteredPeriods[i].endTime
+            let nextPeriodStart = filteredPeriods[i + 1].startTime
             
             if timeInterval > currentPeriodEnd && timeInterval < nextPeriodStart {
                 return true
