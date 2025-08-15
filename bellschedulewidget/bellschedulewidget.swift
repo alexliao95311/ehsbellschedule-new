@@ -35,27 +35,81 @@ struct BellScheduleProvider: AppIntentTimelineProvider {
         // Create multiple entries for very frequent updates
         var entries: [BellScheduleEntry] = []
         
-        // Update every 5 seconds during school hours, every 15 seconds otherwise
-        let isActiveTime = isSchoolActiveTime(currentDate)
-        let updateInterval: TimeInterval = isActiveTime ? 5 : 15
+        // Update every 5 seconds for real-time countdown
+        let updateInterval: TimeInterval = 5
         
-        // Create entries for the next 30 updates (more frequent)
-        for i in 0..<30 {
+        // Get base widget data once
+        let baseWidgetData = WidgetDataProvider.shared.getWidgetData()
+        
+        // Create entries for the next 60 updates (5 minutes worth at 5-second intervals)
+        for i in 0..<60 {
             let entryDate = Calendar.current.date(byAdding: .second, value: Int(updateInterval * Double(i)), to: currentDate) ?? currentDate
             
-            // Fetch fresh data for each entry to ensure accuracy
-            let freshWidgetData = WidgetDataProvider.shared.getWidgetData()
-            print("📅 Timeline entry \(i): Using data from \(freshWidgetData.lastUpdated), time remaining: \(freshWidgetData.timeRemaining ?? 0)")
+            // Recalculate time remaining and progress for this specific entry time
+            var updatedWidgetData = baseWidgetData
+            
+            if let endTime = baseWidgetData.currentPeriodEndTime {
+                let timeRemaining = endTime.timeIntervalSince(entryDate)
+                if timeRemaining > 0 {
+                    // Update time remaining for this entry
+                    updatedWidgetData = WidgetData(
+                        currentPeriodName: baseWidgetData.currentPeriodName,
+                        currentPeriodEndTime: baseWidgetData.currentPeriodEndTime,
+                        currentPeriodTeacher: baseWidgetData.currentPeriodTeacher,
+                        currentPeriodRoom: baseWidgetData.currentPeriodRoom,
+                        nextPeriodName: baseWidgetData.nextPeriodName,
+                        nextPeriodStartTime: baseWidgetData.nextPeriodStartTime,
+                        nextPeriodTeacher: baseWidgetData.nextPeriodTeacher,
+                        nextPeriodRoom: baseWidgetData.nextPeriodRoom,
+                        scheduleStatus: baseWidgetData.scheduleStatus,
+                        timeRemaining: timeRemaining,
+                        progress: calculateProgress(for: entryDate, endTime: endTime, baseData: baseWidgetData)
+                    )
+                } else {
+                    // Period has ended, clear current period data
+                    updatedWidgetData = WidgetData(
+                        currentPeriodName: nil,
+                        currentPeriodEndTime: nil,
+                        currentPeriodTeacher: nil,
+                        currentPeriodRoom: nil,
+                        nextPeriodName: baseWidgetData.nextPeriodName,
+                        nextPeriodStartTime: baseWidgetData.nextPeriodStartTime,
+                        nextPeriodTeacher: baseWidgetData.nextPeriodTeacher,
+                        nextPeriodRoom: baseWidgetData.nextPeriodRoom,
+                        scheduleStatus: "Between Classes",
+                        timeRemaining: nil,
+                        progress: nil
+                    )
+                }
+            }
+            
+            print("📅 Timeline entry \(i): Entry time: \(entryDate), time remaining: \(updatedWidgetData.timeRemaining ?? 0)")
             
             let entry = BellScheduleEntry(
                 date: entryDate,
                 configuration: configuration,
-                widgetData: freshWidgetData
+                widgetData: updatedWidgetData
             )
             entries.append(entry)
         }
         
         return Timeline(entries: entries, policy: .after(Calendar.current.date(byAdding: .second, value: Int(updateInterval), to: currentDate) ?? currentDate))
+    }
+    
+    private func calculateProgress(for entryDate: Date, endTime: Date, baseData: WidgetData) -> Double? {
+        // Try to determine the start time to calculate progress
+        if let currentPeriodName = baseData.currentPeriodName,
+           let originalTimeRemaining = baseData.timeRemaining {
+            // Estimate start time based on original data
+            let estimatedStartTime = endTime.addingTimeInterval(-originalTimeRemaining - Date().timeIntervalSince(baseData.lastUpdated))
+            let totalDuration = endTime.timeIntervalSince(estimatedStartTime)
+            let elapsed = entryDate.timeIntervalSince(estimatedStartTime)
+            
+            if totalDuration > 0 {
+                return max(0, min(1, elapsed / totalDuration))
+            }
+        }
+        return baseData.progress
     }
     
     private func isSchoolActiveTime(_ date: Date) -> Bool {
