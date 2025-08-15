@@ -241,6 +241,10 @@ struct SmallWidgetView: View {
                         .fontWeight(.semibold)
                         .foregroundColor(.green)
                         .monospacedDigit()
+                    
+                    Text("start")
+                        .font(.caption2)
+                        .foregroundColor(.white.opacity(0.8))
                 }
                 
             } else {

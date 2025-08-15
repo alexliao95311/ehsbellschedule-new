@@ -64,6 +64,21 @@ class ScheduleCalculator {
         return nextPeriod.startTime - date.timeIntervalSinceReferenceDate
     }
     
+    func timeUntilNextFilteredPeriod(at date: Date = Date()) -> TimeInterval? {
+        let schedule = getCurrentSchedule(for: date)
+        let preferences = UserPreferences.shared
+        let filteredPeriods = schedule.filteredPeriods(
+            showPeriod0: preferences.showPeriod0,
+            showPeriod7: preferences.showPeriod7
+        )
+        
+        let timeInterval = date.timeIntervalSinceReferenceDate
+        if let nextPeriod = filteredPeriods.first(where: { $0.startTime > timeInterval }) {
+            return nextPeriod.startTime - timeInterval
+        }
+        return nil
+    }
+    
     func isInPassingPeriod(at date: Date = Date()) -> Bool {
         let schedule = getCurrentSchedule(for: date)
         let preferences = UserPreferences.shared
@@ -73,6 +88,7 @@ class ScheduleCalculator {
         )
         let timeInterval = date.timeIntervalSinceReferenceDate
         
+        // Check if we're in a passing period between any two filtered periods
         for i in 0..<filteredPeriods.count - 1 {
             let currentPeriodEnd = filteredPeriods[i].endTime
             let nextPeriodStart = filteredPeriods[i + 1].startTime
@@ -121,13 +137,23 @@ class ScheduleCalculator {
         }
         
         let schedule = getCurrentSchedule(for: date)
+        let preferences = UserPreferences.shared
+        let filteredPeriods = schedule.filteredPeriods(
+            showPeriod0: preferences.showPeriod0,
+            showPeriod7: preferences.showPeriod7
+        )
         
-        if let currentPeriod = schedule.getCurrentPeriod(at: date) {
+        // Check if we're currently in a filtered period
+        let timeInterval = date.timeIntervalSinceReferenceDate
+        if let currentPeriod = filteredPeriods.first(where: { period in
+            timeInterval >= period.startTime && timeInterval < period.endTime
+        }) {
             let timeRemaining = currentPeriod.timeRemaining(from: date)
             let progress = currentPeriod.progress(from: date)
             return .inClass(period: currentPeriod, timeRemaining: timeRemaining, progress: progress)
         }
         
+        // Check if we're in a passing period between filtered periods
         if isInPassingPeriod(at: date) {
             if let nextPeriod = getNextPeriod(at: date) {
                 let timeUntilNext = timeUntilNextPeriod(at: date) ?? 0
@@ -135,8 +161,24 @@ class ScheduleCalculator {
             }
         }
         
-        if let nextPeriod = getNextPeriod(at: date) {
-            let timeUntilNext = timeUntilNextPeriod(at: date) ?? 0
+        // Check if we're before the first filtered period
+        if let firstPeriod = filteredPeriods.first {
+            if timeInterval < firstPeriod.startTime {
+                let timeUntilNext = firstPeriod.startTime - timeInterval
+                return .beforeSchool(nextPeriod: firstPeriod, timeUntilNext: timeUntilNext)
+            }
+        }
+        
+        // Check if we're after the last filtered period
+        if let lastPeriod = filteredPeriods.last {
+            if timeInterval >= lastPeriod.endTime {
+                return .afterSchool
+            }
+        }
+        
+        // If we're between periods but not in a passing period, check if there's a next filtered period
+        if let nextPeriod = filteredPeriods.first(where: { $0.startTime > timeInterval }) {
+            let timeUntilNext = nextPeriod.startTime - timeInterval
             return .beforeSchool(nextPeriod: nextPeriod, timeUntilNext: timeUntilNext)
         }
         
