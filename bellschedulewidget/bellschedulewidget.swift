@@ -285,19 +285,15 @@ struct SmallWidgetView: View {
     }
     
     private var scheduleStatusMessage: String {
-        // Add debug info to see what's happening
-        let debugInfo = "Status: \(entry.widgetData.scheduleStatus)"
-        let dataInfo = "Data: \(entry.widgetData.currentPeriodName ?? "nil")"
-        
         switch entry.widgetData.scheduleStatus {
         case "No School":
-            return "No School Today\n\(debugInfo)\n\(dataInfo)"
+            return "No School Today"
         case "After School":
-            return "School's Out!\n\(debugInfo)\n\(dataInfo)"
+            return "School's Out!"
         case "Before School":
-            return "School Starts Soon\n\(debugInfo)\n\(dataInfo)"
+            return "School Starts Soon"
         default:
-            return "\(entry.widgetData.scheduleStatus)\n\(debugInfo)\n\(dataInfo)"
+            return entry.widgetData.scheduleStatus
         }
     }
 }
@@ -553,8 +549,10 @@ struct LargeWidgetView: View {
                 .frame(maxWidth: .infinity)
                 
             } else {
-                // No active class view
+                // No active class view - centered
                 VStack(spacing: 16) {
+                    Spacer()
+                    
                     Image(systemName: scheduleStatusIcon)
                         .font(.system(size: 48))
                         .foregroundColor(.green)
@@ -564,6 +562,8 @@ struct LargeWidgetView: View {
                         .fontWeight(.medium)
                         .foregroundColor(.white)
                         .multilineTextAlignment(.center)
+                    
+                    Spacer()
                 }
                 .frame(maxWidth: .infinity)
             }

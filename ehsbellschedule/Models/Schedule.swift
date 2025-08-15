@@ -32,6 +32,26 @@ enum ScheduleType: String, CaseIterable, Codable {
     var shortDisplayName: String {
         return abbreviation
     }
+    
+    static func getCurrentDayScheduleType() -> ScheduleType {
+        let calendar = Calendar.current
+        let weekday = calendar.component(.weekday, from: Date())
+        
+        switch weekday {
+        case 2: // Monday
+            return .monday
+        case 3: // Tuesday
+            return .tuesday
+        case 4: // Wednesday
+            return .wednesday
+        case 5: // Thursday
+            return .thursday
+        case 6: // Friday
+            return .friday
+        default: // Weekend (Sunday=1, Saturday=7) or other days - default to Monday
+            return .monday
+        }
+    }
 }
 
 struct Schedule: Identifiable, Codable {

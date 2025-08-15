@@ -11,6 +11,9 @@ class InformationViewModel: ObservableObject {
     private var cancellables = Set<AnyCancellable>()
     
     init() {
+        // Automatically set to current day's schedule
+        selectedScheduleType = ScheduleType.getCurrentDayScheduleType()
+        
         setupBindings()
         updateFilteredPeriods()
         calculateAnalytics()

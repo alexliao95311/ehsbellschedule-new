@@ -2,7 +2,7 @@ import SwiftUI
 
 struct InformationView: View {
     @ObservedObject private var preferences = UserPreferences.shared
-    @State private var selectedScheduleType: ScheduleType = .monday
+    @StateObject private var viewModel = InformationViewModel()
     
     var body: some View {
         NavigationView {
@@ -11,7 +11,7 @@ struct InformationView: View {
                 
                 ScrollView {
                     LazyVStack(spacing: 12) {
-                        ForEach(filteredPeriods, id: \.number) { period in
+                        ForEach(viewModel.filteredPeriods, id: \.number) { period in
                             periodCard(for: period)
                                 .id("\(period.number)-\(preferences.use24HourFormat)")
                         }
@@ -32,7 +32,7 @@ struct InformationView: View {
     
     private var scheduleTypeSelector: some View {
         VStack(spacing: 0) {
-            Picker("Schedule Type", selection: $selectedScheduleType) {
+            Picker("Schedule Type", selection: $viewModel.selectedScheduleType) {
                 ForEach(ScheduleType.allCases, id: \.self) { type in
                     Text(type.abbreviation).tag(type)
                 }
@@ -48,15 +48,6 @@ struct InformationView: View {
         .background(Constants.Colors.cardBackground(preferences.isDarkMode))
     }
     
-    // MARK: - Filtered Periods
-    
-    private var filteredPeriods: [Period] {
-        let schedule = ScheduleCalculator.shared.getScheduleForType(selectedScheduleType)
-        return schedule.filteredPeriods(
-            showPeriod0: preferences.showPeriod0,
-            showPeriod7: preferences.showPeriod7
-        )
-    }
     
     // MARK: - Period Card
     
