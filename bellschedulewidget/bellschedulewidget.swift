@@ -35,14 +35,14 @@ struct BellScheduleProvider: AppIntentTimelineProvider {
         // Create multiple entries for very frequent updates
         var entries: [BellScheduleEntry] = []
         
-        // Update every 5 seconds for real-time countdown
-        let updateInterval: TimeInterval = 5
+        // Update every second for real-time countdown
+        let updateInterval: TimeInterval = 1
         
         // Get base widget data once
         let baseWidgetData = WidgetDataProvider.shared.getWidgetData()
         
-        // Create entries for the next 60 updates (5 minutes worth at 5-second intervals)
-        for i in 0..<60 {
+        // Create entries for the next 120 updates (2 minutes worth at 1-second intervals)
+        for i in 0..<120 {
             let entryDate = Calendar.current.date(byAdding: .second, value: Int(updateInterval * Double(i)), to: currentDate) ?? currentDate
             
             // Recalculate time remaining and progress for this specific entry time
@@ -97,16 +97,19 @@ struct BellScheduleProvider: AppIntentTimelineProvider {
     }
     
     private func calculateProgress(for entryDate: Date, endTime: Date, baseData: WidgetData) -> Double? {
-        // Try to determine the start time to calculate progress
-        if let currentPeriodName = baseData.currentPeriodName,
-           let originalTimeRemaining = baseData.timeRemaining {
-            // Estimate start time based on original data
-            let estimatedStartTime = endTime.addingTimeInterval(-originalTimeRemaining - Date().timeIntervalSince(baseData.lastUpdated))
-            let totalDuration = endTime.timeIntervalSince(estimatedStartTime)
-            let elapsed = entryDate.timeIntervalSince(estimatedStartTime)
+        // Match the main app's progress calculation: elapsed / duration
+        if let originalTimeRemaining = baseData.timeRemaining {
+            // Calculate the start time: endTime - originalTimeRemaining (when data was last updated)
+            let startTime = endTime.addingTimeInterval(-originalTimeRemaining)
             
-            if totalDuration > 0 {
-                return max(0, min(1, elapsed / totalDuration))
+            // Calculate duration and elapsed time using the same method as Period model
+            let duration = endTime.timeIntervalSince(startTime)
+            let elapsed = entryDate.timeIntervalSince(startTime)
+            
+            if duration > 0 {
+                // Use the exact same formula as Period.progress(from:)
+                let progress = elapsed / duration
+                return min(1.0, max(0.0, progress))
             }
         }
         return baseData.progress
@@ -156,8 +159,12 @@ struct SmallWidgetView: View {
     let entry: BellScheduleProvider.Entry
     
     var body: some View {
-        VStack(spacing: 8) {
-            // Status badge
+        VStack(spacing: 0) {
+            // Top margin
+            Spacer()
+                .frame(height: 8)
+            
+            // Status badge - centered
             Text(entry.widgetData.scheduleStatus)
                 .font(.caption2)
                 .fontWeight(.semibold)
@@ -167,11 +174,13 @@ struct SmallWidgetView: View {
                 .background(Color.green.opacity(0.8))
                 .cornerRadius(4)
             
-            // Main content
+            Spacer()
+            
+            // Main content - centered
             if let currentPeriod = entry.widgetData.currentPeriodName,
                let timeRemaining = entry.widgetData.timeRemaining {
                 // Currently in class
-                VStack(spacing: 4) {
+                VStack(spacing: 6) {
                     Text(currentPeriod)
                         .font(.headline)
                         .fontWeight(.bold)
@@ -194,12 +203,17 @@ struct SmallWidgetView: View {
                         .fontWeight(.bold)
                         .foregroundColor(.green)
                         .monospacedDigit()
+                        .contentTransition(.numericText())
+                    
+                    Text("remaining")
+                        .font(.caption2)
+                        .foregroundColor(.white.opacity(0.8))
                 }
                 
             } else if let nextPeriod = entry.widgetData.nextPeriodName,
                       let startTime = entry.widgetData.nextPeriodStartTime {
                 // Next class
-                VStack(spacing: 4) {
+                VStack(spacing: 6) {
                     Text("Next:")
                         .font(.caption)
                         .fontWeight(.semibold)
@@ -231,7 +245,7 @@ struct SmallWidgetView: View {
                 
             } else {
                 // No active schedule
-                VStack(spacing: 4) {
+                VStack(spacing: 6) {
                     Image(systemName: scheduleStatusIcon)
                         .font(.title2)
                         .foregroundColor(.green)
@@ -246,12 +260,11 @@ struct SmallWidgetView: View {
             
             Spacer()
         }
-        .padding(.horizontal, 12)
+        .padding(.horizontal, 6)
         .padding(.vertical, 8)
-        .background(
-            Color.black
-        )
-        .cornerRadius(12)
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
+        .background(Color.black)
+        .clipShape(ContainerRelativeShape())
     }
     
     private var scheduleStatusIcon: String {
@@ -291,48 +304,52 @@ struct MediumWidgetView: View {
     let entry: BellScheduleProvider.Entry
     
     var body: some View {
-        HStack(spacing: 16) {
-            // Left side - Current/Next class info
-            VStack(alignment: .leading, spacing: 8) {
-                // Status badge
-                Text(entry.widgetData.scheduleStatus)
-                    .font(.caption)
-                    .fontWeight(.semibold)
-                    .foregroundColor(.white)
-                    .padding(.horizontal, 8)
-                    .padding(.vertical, 4)
-                    .background(Color.green.opacity(0.8))
-                    .cornerRadius(6)
+        HStack(spacing: 12) {
+            // Left side - Class info
+            VStack(alignment: .leading, spacing: 0) {
+                // Status badge at top
+                HStack {
+                    Text(entry.widgetData.scheduleStatus)
+                        .font(.caption2)
+                        .fontWeight(.semibold)
+                        .foregroundColor(.white)
+                        .padding(.horizontal, 6)
+                        .padding(.vertical, 2)
+                        .background(Color.green.opacity(0.8))
+                        .cornerRadius(6)
+                    
+                    Spacer()
+                }
+                
+                Spacer()
                 
                 if let currentPeriod = entry.widgetData.currentPeriodName,
                    let _ = entry.widgetData.timeRemaining,
                    let endTime = entry.widgetData.currentPeriodEndTime {
                     // Currently in class
-                    VStack(alignment: .leading, spacing: 6) {
+                    VStack(alignment: .leading, spacing: 3) {
                         Text(currentPeriod)
                             .font(.title2)
                             .fontWeight(.bold)
                             .foregroundColor(.white)
                             .lineLimit(2)
                         
-                        // Show teacher and room if available
                         if let teacher = entry.widgetData.currentPeriodTeacher,
                            let room = entry.widgetData.currentPeriodRoom {
                             Text("\(teacher) • Room \(room)")
                                 .font(.caption)
-                                .foregroundColor(.white.opacity(0.8))
+                                .foregroundColor(.white.opacity(0.7))
                                 .lineLimit(1)
                         }
                         
-                        HStack(spacing: 4) {
+                        HStack(spacing: 3) {
                             Image(systemName: "clock")
-                                .font(.caption)
+                                .font(.caption2)
                                 .foregroundColor(.green)
                             
-                            Text("Ends: \(WidgetTimeFormatter.shared.formatTime(endTime, use24Hour: entry.configuration.use24HourFormat))")
-                                .font(.caption)
-                                .fontWeight(.medium)
-                                .foregroundColor(.white.opacity(0.9))
+                            Text("Ends \(WidgetTimeFormatter.shared.formatTime(endTime, use24Hour: entry.configuration.use24HourFormat))")
+                                .font(.caption2)
+                                .foregroundColor(.white.opacity(0.8))
                                 .monospacedDigit()
                         }
                     }
@@ -340,8 +357,8 @@ struct MediumWidgetView: View {
                 } else if let nextPeriod = entry.widgetData.nextPeriodName,
                           let startTime = entry.widgetData.nextPeriodStartTime {
                     // Next class
-                    VStack(alignment: .leading, spacing: 6) {
-                        Text("Up Next:")
+                    VStack(alignment: .leading, spacing: 3) {
+                        Text("Up Next")
                             .font(.caption)
                             .fontWeight(.semibold)
                             .foregroundColor(.green)
@@ -352,86 +369,82 @@ struct MediumWidgetView: View {
                             .foregroundColor(.white)
                             .lineLimit(2)
                         
-                        // Show teacher and room if available
                         if let teacher = entry.widgetData.nextPeriodTeacher,
                            let room = entry.widgetData.nextPeriodRoom {
                             Text("\(teacher) • Room \(room)")
                                 .font(.caption)
-                                .foregroundColor(.white.opacity(0.8))
+                                .foregroundColor(.white.opacity(0.7))
                                 .lineLimit(1)
                         }
                         
-                        HStack(spacing: 4) {
+                        HStack(spacing: 3) {
                             Image(systemName: "clock")
-                                .font(.caption)
+                                .font(.caption2)
                                 .foregroundColor(.green)
                             
-                            Text("Starts: \(WidgetTimeFormatter.shared.formatTime(startTime, use24Hour: entry.configuration.use24HourFormat))")
-                                .font(.caption)
-                                .fontWeight(.medium)
-                                .foregroundColor(.white.opacity(0.9))
-                                .monospacedDigit()
-                        }
-                    }
-                }
-                
-                Spacer()
-            }
-            
-            // Right side - Timer/Progress
-            VStack(spacing: 8) {
-                if let timeRemaining = entry.widgetData.timeRemaining {
-                    // Countdown timer
-                    VStack(spacing: 6) {
-                        Text(WidgetTimeFormatter.shared.formatCountdown(timeRemaining))
-                            .font(.system(size: 32, weight: .bold, design: .monospaced))
-                            .foregroundColor(.green)
-                            .monospacedDigit()
-                        
-                        Text("remaining")
-                            .font(.caption)
-                            .fontWeight(.medium)
-                            .foregroundColor(.white.opacity(0.8))
-                    }
-                    
-                    // Progress indicator
-                    if let progress = entry.widgetData.progress {
-                        VStack(spacing: 4) {
-                            ProgressView(value: progress)
-                                .progressViewStyle(LinearProgressViewStyle(tint: .green))
-                                .scaleEffect(y: 3)
-                                .frame(height: 12)
-                            
-                            Text("\(Int(progress * 100))% complete")
+                            Text("Starts \(WidgetTimeFormatter.shared.formatTime(startTime, use24Hour: entry.configuration.use24HourFormat))")
                                 .font(.caption2)
-                                .foregroundColor(.white)
+                                .foregroundColor(.green)
+                                .fontWeight(.medium)
+                                .monospacedDigit()
                         }
                     }
                     
                 } else {
-                    // No active timer
-                    VStack(spacing: 8) {
+                    // No schedule
+                    VStack(alignment: .leading, spacing: 4) {
                         Image(systemName: scheduleStatusIcon)
-                            .font(.system(size: 40))
+                            .font(.title3)
                             .foregroundColor(.green)
                         
-                        Text(entry.widgetData.scheduleStatus)
-                            .font(.caption)
-                            .fontWeight(.medium)
+                        Text(scheduleStatusMessage)
+                            .font(.subheadline)
                             .foregroundColor(.white.opacity(0.8))
-                            .multilineTextAlignment(.center)
+                            .lineLimit(2)
                     }
                 }
                 
                 Spacer()
             }
+            .frame(maxWidth: .infinity)
+            
+            // Right side - Timer (50% of space)
+            VStack {
+                Spacer()
+                
+                if let timeRemaining = entry.widgetData.timeRemaining {
+                    VStack(spacing: 4) {
+                        Text(WidgetTimeFormatter.shared.formatCountdown(timeRemaining))
+                            .font(.system(size: 34, weight: .bold, design: .monospaced))
+                            .foregroundColor(.green)
+                            .monospacedDigit()
+                            .contentTransition(.numericText())
+                        
+                        Text("remaining")
+                            .font(.caption)
+                            .foregroundColor(.white.opacity(0.7))
+                    }
+                } else {
+                    VStack(spacing: 6) {
+                        Image(systemName: scheduleStatusIcon)
+                            .font(.title)
+                            .foregroundColor(.green)
+                        
+                        Text("No Timer")
+                            .font(.caption)
+                            .foregroundColor(.white.opacity(0.7))
+                    }
+                }
+                
+                Spacer()
+            }
+            .frame(maxWidth: .infinity)
         }
         .padding(.horizontal, 16)
         .padding(.vertical, 12)
-        .background(
-            Color.black
-        )
-        .cornerRadius(16)
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
+        .background(Color.black)
+        .clipShape(ContainerRelativeShape())
     }
     
     private var scheduleStatusIcon: String {
@@ -446,6 +459,19 @@ struct MediumWidgetView: View {
             return "clock"
         }
     }
+    
+    private var scheduleStatusMessage: String {
+        switch entry.widgetData.scheduleStatus {
+        case "No School":
+            return "No School Today"
+        case "After School":
+            return "School's Out!"
+        case "Before School":
+            return "School Starts Soon"
+        default:
+            return entry.widgetData.scheduleStatus
+        }
+    }
 }
 
 // MARK: - Large Widget
@@ -455,35 +481,30 @@ struct LargeWidgetView: View {
     
     var body: some View {
         VStack(spacing: 16) {
-            // Header
+            // Header - Status badge only
             HStack {
-                VStack(alignment: .leading, spacing: 4) {
-                    Text("EHS Schedule")
-                        .font(.headline)
-                        .fontWeight(.semibold)
-                    
-                    Text(entry.widgetData.scheduleStatus)
-                        .font(.caption)
-                        .foregroundColor(.secondary)
-                }
+                Text(entry.widgetData.scheduleStatus)
+                    .font(.caption)
+                    .fontWeight(.semibold)
+                    .foregroundColor(.white)
+                    .padding(.horizontal, 8)
+                    .padding(.vertical, 4)
+                    .background(Color.green.opacity(0.8))
+                    .cornerRadius(6)
                 
                 Spacer()
-                
-                Text(entry.date, style: .time)
-                    .font(.subheadline)
-                    .fontWeight(.medium)
-                    .monospacedDigit()
             }
             
             // Main content area
             if let currentPeriod = entry.widgetData.currentPeriodName,
                let timeRemaining = entry.widgetData.timeRemaining,
-               let progress = entry.widgetData.progress {
+               let endTime = entry.widgetData.currentPeriodEndTime {
                 // Currently in class view
-                VStack(spacing: 12) {
+                VStack(spacing: 16) {
                     Text(currentPeriod)
-                        .font(.title2)
+                        .font(.title)
                         .fontWeight(.bold)
+                        .foregroundColor(.white)
                         .multilineTextAlignment(.center)
                     
                     // Show teacher and room if available
@@ -491,60 +512,92 @@ struct LargeWidgetView: View {
                        let room = entry.widgetData.currentPeriodRoom {
                         Text("\(teacher) • Room \(room)")
                             .font(.subheadline)
-                            .foregroundColor(.secondary)
+                            .foregroundColor(.white.opacity(0.8))
                             .multilineTextAlignment(.center)
                     }
                     
-                    // Circular progress
-                    ZStack {
-                        Circle()
-                            .trim(from: 0, to: progress)
-                            .stroke(Color.green, style: StrokeStyle(lineWidth: 8, lineCap: .round))
-                            .frame(width: 100, height: 100)
-                            .rotationEffect(.degrees(-90))
+                    // Time remaining - simplified without circle
+                    VStack(spacing: 8) {
+                        Text(WidgetTimeFormatter.shared.formatCountdown(timeRemaining))
+                            .font(.system(size: 36, weight: .bold, design: .monospaced))
+                            .foregroundColor(.green)
+                            .monospacedDigit()
+                            .contentTransition(.numericText())
                         
-                        VStack {
-                            Text(WidgetTimeFormatter.shared.formatCountdown(timeRemaining))
-                                .font(.headline)
-                                .fontWeight(.bold)
-                                .monospacedDigit()
-                            
-                            Text("left")
-                                .font(.caption2)
-                                .foregroundColor(.secondary)
-                        }
+                        Text("remaining")
+                            .font(.subheadline)
+                            .foregroundColor(.white.opacity(0.8))
+                    }
+                    
+                    // Show when class ends
+                    HStack(spacing: 4) {
+                        Image(systemName: "clock")
+                            .font(.subheadline)
+                            .foregroundColor(.green)
+                        
+                        Text("Ends: \(WidgetTimeFormatter.shared.formatTime(endTime, use24Hour: entry.configuration.use24HourFormat))")
+                            .font(.subheadline)
+                            .fontWeight(.medium)
+                            .foregroundColor(.white.opacity(0.9))
+                            .monospacedDigit()
                     }
                 }
                 
             } else {
                 // No active class view
-                VStack(spacing: 12) {
+                VStack(spacing: 16) {
                     Image(systemName: scheduleStatusIcon)
                         .font(.system(size: 48))
-                        .foregroundColor(.secondary)
+                        .foregroundColor(.green)
                     
                     Text(scheduleStatusMessage)
-                        .font(.headline)
+                        .font(.title2)
+                        .fontWeight(.medium)
+                        .foregroundColor(.white)
                         .multilineTextAlignment(.center)
+                }
+            }
+            
+            // Always show next class section if available
+            if let nextPeriod = entry.widgetData.nextPeriodName,
+               let startTime = entry.widgetData.nextPeriodStartTime {
+                VStack(spacing: 12) {
+                    Rectangle()
+                        .fill(Color.white.opacity(0.2))
+                        .frame(height: 1)
+                        .padding(.horizontal, 20)
                     
-                    if let nextPeriod = entry.widgetData.nextPeriodName,
-                       let startTime = entry.widgetData.nextPeriodStartTime {
-                        VStack(spacing: 4) {
-                            Text("Next: \(nextPeriod)")
+                    VStack(spacing: 8) {
+                        Text("Next Class")
+                            .font(.headline)
+                            .fontWeight(.semibold)
+                            .foregroundColor(.green)
+                        
+                        Text(nextPeriod)
+                            .font(.title2)
+                            .fontWeight(.bold)
+                            .foregroundColor(.white)
+                            .multilineTextAlignment(.center)
+                        
+                        // Show teacher and room if available
+                        if let teacher = entry.widgetData.nextPeriodTeacher,
+                           let room = entry.widgetData.nextPeriodRoom {
+                            Text("\(teacher) • Room \(room)")
+                                .font(.subheadline)
+                                .foregroundColor(.white.opacity(0.8))
+                                .multilineTextAlignment(.center)
+                        }
+                        
+                        HStack(spacing: 4) {
+                            Image(systemName: "clock")
+                                .font(.subheadline)
+                                .foregroundColor(.green)
+                            
+                            Text("Starts: \(WidgetTimeFormatter.shared.formatTime(startTime, use24Hour: entry.configuration.use24HourFormat))")
                                 .font(.subheadline)
                                 .fontWeight(.medium)
-                            
-                            // Show teacher and room if available
-                            if let teacher = entry.widgetData.nextPeriodTeacher,
-                               let room = entry.widgetData.nextPeriodRoom {
-                                Text("\(teacher) • Room \(room)")
-                                    .font(.caption)
-                                    .foregroundColor(.secondary)
-                            }
-                            
-                            Text("at \(WidgetTimeFormatter.shared.formatTime(startTime, use24Hour: entry.configuration.use24HourFormat))")
-                                .font(.caption)
-                                .foregroundColor(.secondary)
+                                .foregroundColor(.white.opacity(0.9))
+                                .monospacedDigit()
                         }
                     }
                 }
@@ -554,6 +607,9 @@ struct LargeWidgetView: View {
         }
         .padding(.horizontal, 16)
         .padding(.vertical, 12)
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
+        .background(Color.black)
+        .clipShape(ContainerRelativeShape())
     }
     
     private var scheduleStatusIcon: String {
@@ -624,10 +680,17 @@ struct BellScheduleWidget: Widget {
         date: .now,
         configuration: BellScheduleIntent(),
         widgetData: WidgetData(
+            currentPeriodName: "AP Physics C",
+            currentPeriodEndTime: Date().addingTimeInterval(20 * 60 + 54),
+            currentPeriodTeacher: "Casavant",
+            currentPeriodRoom: "F304",
             nextPeriodName: "English Literature",
-            nextPeriodStartTime: Date().addingTimeInterval(10 * 60),
-            scheduleStatus: "Passing Period",
-            timeRemaining: 10 * 60
+            nextPeriodStartTime: Date().addingTimeInterval(25 * 60),
+            nextPeriodTeacher: "Johnson",
+            nextPeriodRoom: "E201",
+            scheduleStatus: "In Class",
+            timeRemaining: 20 * 60 + 54,
+            progress: 0.7
         )
     )
 }
@@ -638,6 +701,18 @@ struct BellScheduleWidget: Widget {
     BellScheduleEntry(
         date: .now,
         configuration: BellScheduleIntent(),
-        widgetData: WidgetData(scheduleStatus: "After School")
+        widgetData: WidgetData(
+            currentPeriodName: "Mathematics",
+            currentPeriodEndTime: Date().addingTimeInterval(15 * 60),
+            currentPeriodTeacher: "Smith",
+            currentPeriodRoom: "A105",
+            nextPeriodName: "Biology",
+            nextPeriodStartTime: Date().addingTimeInterval(20 * 60),
+            nextPeriodTeacher: "Davis",
+            nextPeriodRoom: "B203",
+            scheduleStatus: "In Class",
+            timeRemaining: 15 * 60,
+            progress: 0.6
+        )
     )
 }

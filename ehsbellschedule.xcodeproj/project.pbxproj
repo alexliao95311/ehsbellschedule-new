@@ -85,11 +85,6 @@
 			path = ehsbellscheduleUITests;
 			sourceTree = "<group>";
 		};
-		2A9983342E49A5BA000CC8D7 /* widget */ = {
-			isa = PBXFileSystemSynchronizedRootGroup;
-			path = widget;
-			sourceTree = "<group>";
-		};
 		2A9983512E49A62A000CC8D7 /* bellschedulewidget */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
 			exceptions = (
@@ -140,7 +135,6 @@
 				2A9982FF2E49A56F000CC8D7 /* ehsbellschedule */,
 				2A9983102E49A570000CC8D7 /* ehsbellscheduleTests */,
 				2A99831A2E49A570000CC8D7 /* ehsbellscheduleUITests */,
-				2A9983342E49A5BA000CC8D7 /* widget */,
 				2A9983512E49A62A000CC8D7 /* bellschedulewidget */,
 				2A99832F2E49A5B9000CC8D7 /* Frameworks */,
 				2A9982FE2E49A56F000CC8D7 /* Products */,
