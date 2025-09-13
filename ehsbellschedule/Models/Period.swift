@@ -29,18 +29,14 @@ struct Period: Identifiable, Codable, Equatable {
         Date(timeIntervalSinceReferenceDate: endTime)
     }
     
-    init(number: Int, startHour: Int, startMinute: Int, endHour: Int, endMinute: Int, defaultName: String) {
+    init(number: Int, startHour: Int, startMinute: Int, endHour: Int, endMinute: Int, defaultName: String, for date: Date = Date()) {
         self.number = number
         self.defaultName = defaultName
         
         let calendar = Calendar.current
-        let today = Date()
         
-        let startComponents = DateComponents(hour: startHour, minute: startMinute)
-        let endComponents = DateComponents(hour: endHour, minute: endMinute)
-        
-        let startDate = calendar.date(bySettingHour: startHour, minute: startMinute, second: 0, of: today) ?? today
-        let endDate = calendar.date(bySettingHour: endHour, minute: endMinute, second: 0, of: today) ?? today
+        let startDate = calendar.date(bySettingHour: startHour, minute: startMinute, second: 0, of: date) ?? date
+        let endDate = calendar.date(bySettingHour: endHour, minute: endMinute, second: 0, of: date) ?? date
         
         self.startTime = startDate.timeIntervalSinceReferenceDate
         self.endTime = endDate.timeIntervalSinceReferenceDate

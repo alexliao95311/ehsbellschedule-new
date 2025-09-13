@@ -315,7 +315,7 @@ struct SettingsView: View {
                         .font(Constants.Fonts.body)
                         .foregroundColor(Constants.Colors.textPrimary(preferences.isDarkMode))
                     
-                    Text("Version \(Bundle.main.infoDictionary?["CFBundleShortVersionString"] as! String)")
+                    Text("Version 2.2 - FIXED SCHEDULE SWITCHING")
                         .font(Constants.Fonts.caption)
                         .foregroundColor(Constants.Colors.textSecondary(preferences.isDarkMode))
                 }

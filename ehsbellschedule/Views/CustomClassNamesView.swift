@@ -58,7 +58,7 @@ struct CustomClassNamesView: View {
     }
     
     private var allPeriods: [Period] {
-        let schedule = Schedule.mondaySchedule
+        let schedule = Schedule.mondaySchedule()
         return schedule.filteredPeriods(
             showPeriod0: preferences.showPeriod0,
             showPeriod7: preferences.showPeriod7

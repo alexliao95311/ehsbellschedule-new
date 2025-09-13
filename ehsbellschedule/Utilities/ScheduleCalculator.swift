@@ -11,17 +11,17 @@ class ScheduleCalculator {
         
         switch weekday {
         case 2: // Monday
-            return Schedule.mondaySchedule
+            return Schedule.mondaySchedule(for: date)
         case 3: // Tuesday
-            return Schedule.tuesdaySchedule
+            return Schedule.tuesdaySchedule(for: date)
         case 4: // Wednesday
-            return Schedule.wednesdaySchedule
+            return Schedule.wednesdaySchedule(for: date)
         case 5: // Thursday
-            return Schedule.thursdaySchedule
+            return Schedule.thursdaySchedule(for: date)
         case 6: // Friday
-            return Schedule.fridaySchedule
+            return Schedule.fridaySchedule(for: date)
         default: // Weekend or other days - default to Monday
-            return Schedule.mondaySchedule
+            return Schedule.mondaySchedule(for: date)
         }
     }
     
@@ -101,20 +101,20 @@ class ScheduleCalculator {
         return false
     }
     
-    func getScheduleForType(_ type: ScheduleType) -> Schedule {
+    func getScheduleForType(_ type: ScheduleType, for date: Date = Date()) -> Schedule {
         switch type {
         case .monday:
-            return Schedule.mondaySchedule
+            return Schedule.mondaySchedule(for: date)
         case .tuesday:
-            return Schedule.tuesdaySchedule
+            return Schedule.tuesdaySchedule(for: date)
         case .wednesday:
-            return Schedule.wednesdaySchedule
+            return Schedule.wednesdaySchedule(for: date)
         case .thursday:
-            return Schedule.thursdaySchedule
+            return Schedule.thursdaySchedule(for: date)
         case .friday:
-            return Schedule.fridaySchedule
+            return Schedule.fridaySchedule(for: date)
         case .minimumDay:
-            return Schedule.minimumDaySchedule
+            return Schedule.minimumDaySchedule(for: date)
         }
     }
     
