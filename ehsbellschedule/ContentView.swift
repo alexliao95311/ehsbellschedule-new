@@ -7,10 +7,13 @@
 
 import SwiftUI
 import UIKit
+import ActivityKit
 
 struct ContentView: View {
     @ObservedObject private var preferences = UserPreferences.shared
     @StateObject private var notificationService = NotificationService.shared
+    @StateObject private var liveActivityManager = LiveActivityManager.shared
+    @StateObject private var myLiveActivityManager = MyLiveActivityManager.shared
     @State private var selectedTab = 0
     
     var body: some View {
@@ -45,10 +48,14 @@ struct ContentView: View {
             
             // Set up frequent widget updates
             setupFrequentWidgetUpdates()
+            
+            // Set up Live Activity management
+            setupLiveActivityManagement()
         }
         .onReceive(NotificationCenter.default.publisher(for: UIApplication.didBecomeActiveNotification)) { _ in
             print("📱 App became active - updating widget data")
             updateWidgetData()
+            updateLiveActivityIfNeeded()
         }
         .onChange(of: selectedTab) { newValue in
             print("Tab changed to: \(newValue)")
@@ -99,6 +106,9 @@ struct ContentView: View {
         
         DataPersistenceService.shared.saveWidgetData(widgetData)
         print("💾 Widget data saved via DataPersistenceService")
+        
+        // Also save Live Activities data
+        saveLiveActivitiesData(from: widgetData)
     }
     
     private func createWidgetData(from status: ScheduleStatus) -> WidgetData {
@@ -217,6 +227,92 @@ struct ContentView: View {
         Timer.scheduledTimer(withTimeInterval: 5.0, repeats: true) { _ in
             print("🔄 Frequent widget update triggered")
             self.updateWidgetData()
+        }
+    }
+    
+    // MARK: - Live Activity Management
+    
+    private func setupLiveActivityManagement() {
+        print("🎯 Setting up Live Activity management...")
+        
+        // Check if Live Activities are available and should be started
+        let calculator = ScheduleCalculator.shared
+        let status = calculator.getScheduleStatus()
+        
+        // Start Live Activity if we're in a school period or passing period
+        let shouldStartLiveActivity = shouldStartLiveActivityForStatus(status)
+        
+        if shouldStartLiveActivity && liveActivityManager.canStartLiveActivity {
+            Task {
+                await liveActivityManager.startLiveActivity()
+                print("✅ Live Activity started automatically")
+            }
+        } else {
+            print("ℹ️ Live Activity not started - status: \(status), can start: \(liveActivityManager.canStartLiveActivity)")
+        }
+        
+        // Also start the new countdown Live Activity
+        if shouldStartLiveActivity && myLiveActivityManager.canStartLiveActivity {
+            Task {
+                await myLiveActivityManager.startLiveActivity()
+                print("✅ Countdown Live Activity started automatically")
+            }
+        } else {
+            print("ℹ️ Countdown Live Activity not started - status: \(status), can start: \(myLiveActivityManager.canStartLiveActivity)")
+        }
+    }
+    
+    private func shouldStartLiveActivityForStatus(_ status: ScheduleStatus) -> Bool {
+        switch status {
+        case .inClass, .passingPeriod:
+            return true
+        case .beforeSchool, .afterSchool, .noSchool:
+            return false
+        }
+    }
+    
+    private func updateLiveActivityIfNeeded() {
+        guard liveActivityManager.isLiveActivityActive else { return }
+        
+        Task {
+            await liveActivityManager.updateLiveActivity()
+        }
+        
+        // Also update the countdown Live Activity
+        if myLiveActivityManager.isLiveActivityActive {
+            Task {
+                await myLiveActivityManager.forceUpdateLiveActivity()
+            }
+        }
+    }
+    
+    private func saveLiveActivitiesData(from widgetData: WidgetData) {
+        print("💾 Saving Live Activities data...")
+        
+        let liveActivitiesData = MyLiveActivitiesData(
+            currentClassName: widgetData.currentPeriodName,
+            currentClassTeacher: widgetData.currentPeriodTeacher,
+            currentClassRoom: widgetData.currentPeriodRoom,
+            classStartTime: widgetData.currentPeriodEndTime?.addingTimeInterval(-(widgetData.timeRemaining ?? 0)),
+            classEndTime: widgetData.currentPeriodEndTime,
+            timeRemaining: widgetData.timeRemaining,
+            progress: widgetData.progress,
+            scheduleStatus: widgetData.scheduleStatus,
+            isInClass: widgetData.currentPeriodName != nil && widgetData.timeRemaining != nil && widgetData.timeRemaining! > 0,
+            nextClassName: widgetData.nextPeriodName,
+            nextClassTeacher: widgetData.nextPeriodTeacher,
+            nextClassRoom: widgetData.nextPeriodRoom,
+            nextClassStartTime: widgetData.nextPeriodStartTime
+        )
+        
+        MyLiveActivitiesDataProvider.shared.saveLiveActivitiesData(liveActivitiesData)
+        print("✅ Live Activities data saved")
+        
+        // Update the Live Activity if it's active
+        if myLiveActivityManager.isLiveActivityActive {
+            Task {
+                await myLiveActivityManager.forceUpdateLiveActivity()
+            }
         }
     }
 }

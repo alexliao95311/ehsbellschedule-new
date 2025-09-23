@@ -1,9 +1,12 @@
 import SwiftUI
 import UserNotifications
+import ActivityKit
 
 struct SettingsView: View {
     @ObservedObject private var preferences = UserPreferences.shared
     @StateObject private var notificationService = NotificationService.shared
+    @StateObject private var liveActivityManager = LiveActivityManager.shared
+    @StateObject private var myLiveActivityManager = MyLiveActivityManager.shared
     @State private var showingNotificationAlert = false
     @State private var showingResetAlert = false
     @State private var showingCustomClassNames = false
@@ -16,6 +19,8 @@ struct SettingsView: View {
             List {
                 // Moved customization section to the top since it's most important
                 customizationSection
+                myLiveActivitySection
+                liveActivitySection
                 displaySettingsSection
                 scheduleSettingsSection
                 notificationSettingsSection
@@ -90,6 +95,212 @@ struct SettingsView: View {
             }
         }
         .listRowBackground(Constants.Colors.cardBackground(preferences.isDarkMode))
+    }
+    
+    // MARK: - MyLiveActivity Section
+    
+    private var myLiveActivitySection: some View {
+        Section("Countdown Live Activity") {
+            myLiveActivityToggleRow
+            
+            if myLiveActivityManager.isLiveActivityActive {
+                myLiveActivityStatusRow
+                myLiveActivityRefreshRow
+            }
+        }
+        .listRowBackground(Constants.Colors.cardBackground(preferences.isDarkMode))
+    }
+    
+    private var myLiveActivityToggleRow: some View {
+        Button(action: {
+            Task {
+                await myLiveActivityManager.toggleLiveActivity()
+            }
+        }) {
+            HStack {
+                Image(systemName: myLiveActivityManager.isLiveActivityActive ? "livephoto.play" : "livephoto")
+                    .foregroundColor(myLiveActivityManager.isLiveActivityActive ? Constants.Colors.primaryGreen(preferences.isDarkMode) : Constants.Colors.textSecondary(preferences.isDarkMode))
+                    .frame(width: 24)
+                
+                VStack(alignment: .leading, spacing: 2) {
+                    Text("Real-time Countdown")
+                        .font(Constants.Fonts.body)
+                        .foregroundColor(Constants.Colors.textPrimary(preferences.isDarkMode))
+                    
+                    Text(myLiveActivityManager.isLiveActivityActive ? "Active - Updates every second" : "Inactive - Start for real-time countdown")
+                        .font(Constants.Fonts.caption)
+                        .foregroundColor(myLiveActivityManager.isLiveActivityActive ? Constants.Colors.success : Constants.Colors.textSecondary(preferences.isDarkMode))
+                }
+                
+                Spacer()
+                
+                if myLiveActivityManager.isLiveActivityActive {
+                    HStack(spacing: 4) {
+                        Image(systemName: "checkmark.circle.fill")
+                            .foregroundColor(Constants.Colors.success)
+                        
+                        if myLiveActivityManager.isUpdating {
+                            Image(systemName: "arrow.clockwise")
+                                .font(.caption2)
+                                .foregroundColor(Constants.Colors.primaryGreen(preferences.isDarkMode))
+                        }
+                    }
+                } else {
+                    Image(systemName: "play.circle")
+                        .foregroundColor(Constants.Colors.primaryGreen(preferences.isDarkMode))
+                }
+            }
+        }
+        .disabled(!myLiveActivityManager.canStartLiveActivity)
+    }
+    
+    private var myLiveActivityStatusRow: some View {
+        HStack {
+            Image(systemName: "info.circle")
+                .foregroundColor(Constants.Colors.primaryGreen(preferences.isDarkMode))
+                .frame(width: 24)
+            
+            VStack(alignment: .leading, spacing: 2) {
+                Text("Status")
+                    .font(Constants.Fonts.body)
+                    .foregroundColor(Constants.Colors.textPrimary(preferences.isDarkMode))
+                
+                Text("Real-time countdown updating every second")
+                    .font(Constants.Fonts.caption)
+                    .foregroundColor(Constants.Colors.textSecondary(preferences.isDarkMode))
+            }
+            
+            Spacer()
+        }
+    }
+    
+    private var myLiveActivityRefreshRow: some View {
+        Button(action: {
+            Task {
+                await myLiveActivityManager.refreshLiveActivity()
+            }
+        }) {
+            HStack {
+                Image(systemName: "arrow.clockwise")
+                    .foregroundColor(Constants.Colors.primaryGreen(preferences.isDarkMode))
+                    .frame(width: 24)
+                
+                VStack(alignment: .leading, spacing: 2) {
+                    Text("Refresh Countdown")
+                        .font(Constants.Fonts.body)
+                        .foregroundColor(Constants.Colors.textPrimary(preferences.isDarkMode))
+                    
+                    Text("Update with latest schedule data")
+                        .font(Constants.Fonts.caption)
+                        .foregroundColor(Constants.Colors.textSecondary(preferences.isDarkMode))
+                }
+                
+                Spacer()
+                
+                Image(systemName: "chevron.right")
+                    .font(.caption)
+                    .foregroundColor(Constants.Colors.textSecondary(preferences.isDarkMode))
+            }
+        }
+    }
+    
+    // MARK: - Live Activity Section
+    
+    private var liveActivitySection: some View {
+        Section("Live Activities") {
+            liveActivityToggleRow
+            
+            if liveActivityManager.isLiveActivityActive {
+                liveActivityStatusRow
+                liveActivityRefreshRow
+            }
+        }
+        .listRowBackground(Constants.Colors.cardBackground(preferences.isDarkMode))
+    }
+    
+    private var liveActivityToggleRow: some View {
+        Button(action: {
+            Task {
+                await liveActivityManager.toggleLiveActivity()
+            }
+        }) {
+            HStack {
+                Image(systemName: liveActivityManager.isLiveActivityActive ? "livephoto.play" : "livephoto")
+                    .foregroundColor(liveActivityManager.isLiveActivityActive ? Constants.Colors.primaryGreen(preferences.isDarkMode) : Constants.Colors.textSecondary(preferences.isDarkMode))
+                    .frame(width: 24)
+                
+                VStack(alignment: .leading, spacing: 2) {
+                    Text("Live Activity")
+                        .font(Constants.Fonts.body)
+                        .foregroundColor(Constants.Colors.textPrimary(preferences.isDarkMode))
+                    
+                    Text(liveActivityManager.isLiveActivityActive ? "Active - Shows on Lock Screen & Dynamic Island" : "Inactive - Start to show countdown timers")
+                        .font(Constants.Fonts.caption)
+                        .foregroundColor(liveActivityManager.isLiveActivityActive ? Constants.Colors.success : Constants.Colors.textSecondary(preferences.isDarkMode))
+                }
+                
+                Spacer()
+                
+                if liveActivityManager.isLiveActivityActive {
+                    Image(systemName: "checkmark.circle.fill")
+                        .foregroundColor(Constants.Colors.success)
+                } else {
+                    Image(systemName: "play.circle")
+                        .foregroundColor(Constants.Colors.primaryGreen(preferences.isDarkMode))
+                }
+            }
+        }
+        .disabled(!liveActivityManager.canStartLiveActivity)
+    }
+    
+    private var liveActivityStatusRow: some View {
+        HStack {
+            Image(systemName: "info.circle")
+                .foregroundColor(Constants.Colors.primaryGreen(preferences.isDarkMode))
+                .frame(width: 24)
+            
+            VStack(alignment: .leading, spacing: 2) {
+                Text("Status")
+                    .font(Constants.Fonts.body)
+                    .foregroundColor(Constants.Colors.textPrimary(preferences.isDarkMode))
+                
+                Text("Live Activity is running and updating automatically")
+                    .font(Constants.Fonts.caption)
+                    .foregroundColor(Constants.Colors.textSecondary(preferences.isDarkMode))
+            }
+            
+            Spacer()
+        }
+    }
+    
+    private var liveActivityRefreshRow: some View {
+        Button(action: {
+            Task {
+                await liveActivityManager.refreshLiveActivity()
+            }
+        }) {
+            HStack {
+                Image(systemName: "arrow.clockwise")
+                    .foregroundColor(Constants.Colors.primaryGreen(preferences.isDarkMode))
+                    .frame(width: 24)
+                
+                VStack(alignment: .leading, spacing: 2) {
+                    Text("Refresh Live Activity")
+                        .font(Constants.Fonts.body)
+                        .foregroundColor(Constants.Colors.textPrimary(preferences.isDarkMode))
+                    
+                    Text("Update with latest schedule data")
+                        .font(Constants.Fonts.caption)
+                        .foregroundColor(Constants.Colors.textSecondary(preferences.isDarkMode))
+                }
+                
+                Spacer()
+                
+                Image(systemName: "chevron.right")
+                    .font(.caption)
+                    .foregroundColor(Constants.Colors.textSecondary(preferences.isDarkMode))
+            }
+        }
     }
     
     // MARK: - Display Settings Section
