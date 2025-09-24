@@ -9,6 +9,198 @@ import Foundation
 import ActivityKit
 import WidgetKit
 
+// MARK: - Live Activity Attributes (matching widget extension)
+
+struct MyLiveActivitiesAttributes: ActivityAttributes {
+    public struct ContentState: Codable, Hashable {
+        // Current class information
+        var currentClassName: String?
+        var currentClassTeacher: String?
+        var currentClassRoom: String?
+        var classStartTime: Date?
+        var classEndTime: Date?
+        var timeRemaining: TimeInterval?
+        var progress: Double?
+        var scheduleStatus: String
+        var isInClass: Bool
+        var lastUpdated: Date
+        
+        // Next class information
+        var nextClassName: String?
+        var nextClassTeacher: String?
+        var nextClassRoom: String?
+        var nextClassStartTime: Date?
+    }
+
+    // Fixed non-changing properties about your activity go here!
+    var schoolName: String
+}
+
+// MARK: - Data Models
+
+struct MyLiveActivitiesData: Codable {
+    let currentClassName: String?
+    let currentClassTeacher: String?
+    let currentClassRoom: String?
+    let classStartTime: Date?
+    let classEndTime: Date?
+    let timeRemaining: TimeInterval?
+    let progress: Double?
+    let scheduleStatus: String
+    let isInClass: Bool
+    let lastUpdated: Date
+    
+    // Next class information
+    let nextClassName: String?
+    let nextClassTeacher: String?
+    let nextClassRoom: String?
+    let nextClassStartTime: Date?
+    
+    init(
+        currentClassName: String? = nil,
+        currentClassTeacher: String? = nil,
+        currentClassRoom: String? = nil,
+        classStartTime: Date? = nil,
+        classEndTime: Date? = nil,
+        timeRemaining: TimeInterval? = nil,
+        progress: Double? = nil,
+        scheduleStatus: String,
+        isInClass: Bool = false,
+        nextClassName: String? = nil,
+        nextClassTeacher: String? = nil,
+        nextClassRoom: String? = nil,
+        nextClassStartTime: Date? = nil
+    ) {
+        self.currentClassName = currentClassName
+        self.currentClassTeacher = currentClassTeacher
+        self.currentClassRoom = currentClassRoom
+        self.classStartTime = classStartTime
+        self.classEndTime = classEndTime
+        self.timeRemaining = timeRemaining
+        self.progress = progress
+        self.scheduleStatus = scheduleStatus
+        self.isInClass = isInClass
+        self.lastUpdated = Date()
+        self.nextClassName = nextClassName
+        self.nextClassTeacher = nextClassTeacher
+        self.nextClassRoom = nextClassRoom
+        self.nextClassStartTime = nextClassStartTime
+    }
+}
+
+// MARK: - Data Provider
+
+class MyLiveActivitiesDataProvider {
+    static let shared = MyLiveActivitiesDataProvider()
+    
+    private let userDefaults: UserDefaults
+    private let appGroupIdentifier = "group.club.ehsprogramming.ehsbellschedule"
+    
+    private init() {
+        if let sharedDefaults = UserDefaults(suiteName: appGroupIdentifier) {
+            self.userDefaults = sharedDefaults
+        } else {
+            self.userDefaults = UserDefaults.standard
+        }
+    }
+    
+    func getLiveActivitiesData() -> MyLiveActivitiesData {
+        print("🔍 MyLiveActivities requesting data...")
+        
+        if let sharedDefaults = UserDefaults(suiteName: appGroupIdentifier) {
+            print("✅ Shared UserDefaults available")
+            
+            // Force refresh the shared UserDefaults
+            sharedDefaults.synchronize()
+            
+            if let data = sharedDefaults.data(forKey: "liveActivitiesData") {
+                print("📦 Found Live Activities data in shared UserDefaults, size: \(data.count) bytes")
+                if let liveActivitiesData = try? JSONDecoder().decode(MyLiveActivitiesData.self, from: data) {
+                    print("✅ Successfully decoded Live Activities data:")
+                    print("   Status: \(liveActivitiesData.scheduleStatus)")
+                    print("   Current class: \(liveActivitiesData.currentClassName ?? "nil")")
+                    print("   Teacher: \(liveActivitiesData.currentClassTeacher ?? "nil")")
+                    print("   Room: \(liveActivitiesData.currentClassRoom ?? "nil")")
+                    print("   Time remaining: \(liveActivitiesData.timeRemaining ?? 0)")
+                    print("   Is in class: \(liveActivitiesData.isInClass)")
+                    print("   Last updated: \(liveActivitiesData.lastUpdated)")
+                    
+                    // Check if data is stale (older than 30 seconds)
+                    let timeSinceUpdate = Date().timeIntervalSince(liveActivitiesData.lastUpdated)
+                    if timeSinceUpdate > 30 {
+                        print("⚠️ Data is stale! Last updated \(Int(timeSinceUpdate)) seconds ago")
+                    } else {
+                        print("✅ Data is fresh! Updated \(Int(timeSinceUpdate)) seconds ago")
+                    }
+                    
+                    return liveActivitiesData
+                } else {
+                    print("❌ Failed to decode Live Activities data from shared UserDefaults")
+                }
+            } else {
+                print("❌ No Live Activities data found in shared UserDefaults")
+            }
+        } else {
+            print("❌ Shared UserDefaults not available")
+        }
+        
+        // Fall back to local UserDefaults
+        print("🔄 Falling back to local UserDefaults...")
+        if let data = userDefaults.data(forKey: "liveActivitiesData") {
+            print("📦 Found Live Activities data in local UserDefaults, size: \(data.count) bytes")
+            if let liveActivitiesData = try? JSONDecoder().decode(MyLiveActivitiesData.self, from: data) {
+                print("✅ Successfully decoded Live Activities data from local UserDefaults")
+                return liveActivitiesData
+            } else {
+                print("❌ Failed to decode Live Activities data from local UserDefaults")
+            }
+        } else {
+            print("❌ No Live Activities data found in local UserDefaults either")
+        }
+        
+        print("⚠️ Returning default 'No Data' Live Activities data")
+        return MyLiveActivitiesData(scheduleStatus: "No Data")
+    }
+    
+    func saveLiveActivitiesData(_ data: MyLiveActivitiesData) {
+        do {
+            let encoded = try JSONEncoder().encode(data)
+            
+            // Save to both shared and local UserDefaults
+            if let sharedDefaults = UserDefaults(suiteName: appGroupIdentifier) {
+                sharedDefaults.set(encoded, forKey: "liveActivitiesData")
+                sharedDefaults.synchronize()
+                print("✅ Saved Live Activities data to shared UserDefaults")
+            }
+            
+            userDefaults.set(encoded, forKey: "liveActivitiesData")
+            print("✅ Saved Live Activities data to local UserDefaults")
+            
+        } catch {
+            print("❌ Failed to save Live Activities data: \(error)")
+        }
+    }
+    
+    func createContentState(from data: MyLiveActivitiesData) -> MyLiveActivitiesAttributes.ContentState {
+        return MyLiveActivitiesAttributes.ContentState(
+            currentClassName: data.currentClassName,
+            currentClassTeacher: data.currentClassTeacher,
+            currentClassRoom: data.currentClassRoom,
+            classStartTime: data.classStartTime,
+            classEndTime: data.classEndTime,
+            timeRemaining: data.timeRemaining,
+            progress: data.progress,
+            scheduleStatus: data.scheduleStatus,
+            isInClass: data.isInClass,
+            lastUpdated: data.lastUpdated,
+            nextClassName: data.nextClassName,
+            nextClassTeacher: data.nextClassTeacher,
+            nextClassRoom: data.nextClassRoom,
+            nextClassStartTime: data.nextClassStartTime
+        )
+    }
+}
+
 @MainActor
 class MyLiveActivityManager: ObservableObject {
     static let shared = MyLiveActivityManager()
@@ -28,8 +220,13 @@ class MyLiveActivityManager: ObservableObject {
         print("🚀 MyLiveActivityManager: Starting Live Activity...")
         
         // Check if Live Activities are available
-        guard ActivityAuthorizationInfo().areActivitiesEnabled else {
+        let authInfo = ActivityAuthorizationInfo()
+        print("📊 Live Activity Authorization Status:")
+        print("   Activities enabled: \(authInfo.areActivitiesEnabled)")
+        
+        guard authInfo.areActivitiesEnabled else {
             print("❌ Live Activities are not enabled")
+            print("💡 Please enable Live Activities in Settings → Face ID & Passcode")
             return
         }
         
@@ -63,6 +260,15 @@ class MyLiveActivityManager: ObservableObject {
             
         } catch {
             print("❌ Failed to start Live Activity: \(error)")
+            
+            // Provide specific error guidance
+            if error.localizedDescription.contains("unsupportedTarget") {
+                print("💡 Troubleshooting tips:")
+                print("   - Make sure you're running on a physical device (not simulator)")
+                print("   - Check that Live Activities are enabled in Settings → Face ID & Passcode")
+                print("   - Ensure your device supports Live Activities (iOS 16.1+)")
+                print("   - Try enabling Live Activities in Settings → [App Name]")
+            }
         }
     }
     

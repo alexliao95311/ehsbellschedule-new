@@ -9,6 +9,8 @@ import ActivityKit
 import WidgetKit
 import SwiftUI
 
+// MARK: - Live Activity Attributes
+
 struct MyLiveActivitiesAttributes: ActivityAttributes {
     public struct ContentState: Codable, Hashable {
         // Current class information

@@ -132,25 +132,6 @@ class MyLiveActivitiesDataProvider {
         print("⚠️ Returning default 'No Data' Live Activities data")
         return MyLiveActivitiesData(scheduleStatus: "No Data")
     }
-    
-    func saveLiveActivitiesData(_ data: MyLiveActivitiesData) {
-        do {
-            let encoded = try JSONEncoder().encode(data)
-            
-            // Save to both shared and local UserDefaults
-            if let sharedDefaults = UserDefaults(suiteName: appGroupIdentifier) {
-                sharedDefaults.set(encoded, forKey: "liveActivitiesData")
-                sharedDefaults.synchronize()
-                print("✅ Saved Live Activities data to shared UserDefaults")
-            }
-            
-            userDefaults.set(encoded, forKey: "liveActivitiesData")
-            print("✅ Saved Live Activities data to local UserDefaults")
-            
-        } catch {
-            print("❌ Failed to save Live Activities data: \(error)")
-        }
-    }
 }
 
 // MARK: - Helper Extensions

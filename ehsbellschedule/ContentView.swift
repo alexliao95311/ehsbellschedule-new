@@ -251,7 +251,7 @@ struct ContentView: View {
             print("ℹ️ Live Activity not started - status: \(status), can start: \(liveActivityManager.canStartLiveActivity)")
         }
         
-        // Also start the new countdown Live Activity
+        // Also start the new countdown Live Activity (only during active periods)
         if shouldStartLiveActivity && myLiveActivityManager.canStartLiveActivity {
             Task {
                 await myLiveActivityManager.startLiveActivity()
@@ -259,6 +259,9 @@ struct ContentView: View {
             }
         } else {
             print("ℹ️ Countdown Live Activity not started - status: \(status), can start: \(myLiveActivityManager.canStartLiveActivity)")
+            if !shouldStartLiveActivity {
+                print("ℹ️ Not starting Live Activity because status is: \(status)")
+            }
         }
     }
     
