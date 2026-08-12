@@ -69,73 +69,74 @@ struct InformationView: View {
         case .monday:
             return [
                 Period(number: 0, startHour: 7, startMinute: 15, endHour: 8, endMinute: 20, defaultName: "Period 0", for: referenceDate),
-                Period(number: 1, startHour: 8, startMinute: 30, endHour: 9, endMinute: 22, defaultName: "Period 1", for: referenceDate),
-                Period(number: 2, startHour: 9, startMinute: 28, endHour: 10, endMinute: 20, defaultName: "Period 2", for: referenceDate),
-                Period(number: 3, startHour: 10, startMinute: 26, endHour: 11, endMinute: 18, defaultName: "Period 3", for: referenceDate),
-                Period(number: 4, startHour: 11, startMinute: 24, endHour: 12, endMinute: 16, defaultName: "Period 4", for: referenceDate),
-                Period(number: 98, startHour: 12, startMinute: 16, endHour: 12, endMinute: 51, defaultName: "Lunch", for: referenceDate),
+                Period(number: 1, startHour: 8, startMinute: 30, endHour: 9, endMinute: 20, defaultName: "Period 1", for: referenceDate),
+                Period(number: 2, startHour: 9, startMinute: 28, endHour: 10, endMinute: 18, defaultName: "Period 2", for: referenceDate),
+                Period(number: 3, startHour: 10, startMinute: 26, endHour: 11, endMinute: 16, defaultName: "Period 3", for: referenceDate),
+                Period(number: 4, startHour: 11, startMinute: 24, endHour: 12, endMinute: 14, defaultName: "Period 4", for: referenceDate),
+                Period(number: 98, startHour: 12, startMinute: 14, endHour: 12, endMinute: 49, defaultName: "Lunch", for: referenceDate),
                 Period(number: 99, startHour: 12, startMinute: 57, endHour: 13, endMinute: 29, defaultName: "ACCESS", for: referenceDate),
-                Period(number: 5, startHour: 13, startMinute: 35, endHour: 14, endMinute: 27, defaultName: "Period 5", for: referenceDate),
-                Period(number: 6, startHour: 14, startMinute: 33, endHour: 15, endMinute: 25, defaultName: "Period 6", for: referenceDate),
-                Period(number: 7, startHour: 15, startMinute: 31, endHour: 16, endMinute: 36, defaultName: "Period 7", for: referenceDate)
+                Period(number: 5, startHour: 13, startMinute: 37, endHour: 14, endMinute: 27, defaultName: "Period 5", for: referenceDate),
+                Period(number: 6, startHour: 14, startMinute: 35, endHour: 15, endMinute: 25, defaultName: "Period 6", for: referenceDate),
+                Period(number: 7, startHour: 15, startMinute: 33, endHour: 16, endMinute: 38, defaultName: "Period 7", for: referenceDate)
             ]
 
         case .tuesday:
             return [
                 Period(number: 0, startHour: 7, startMinute: 15, endHour: 8, endMinute: 20, defaultName: "Period 0", for: referenceDate),
-                Period(number: 1, startHour: 8, startMinute: 30, endHour: 9, endMinute: 28, defaultName: "Period 1", for: referenceDate),
-                Period(number: 2, startHour: 9, startMinute: 34, endHour: 10, endMinute: 32, defaultName: "Period 2", for: referenceDate),
+                Period(number: 1, startHour: 8, startMinute: 30, endHour: 9, endMinute: 26, defaultName: "Period 1", for: referenceDate),
+                Period(number: 2, startHour: 9, startMinute: 34, endHour: 10, endMinute: 30, defaultName: "Period 2", for: referenceDate),
                 Period(number: 3, startHour: 10, startMinute: 38, endHour: 11, endMinute: 38, defaultName: "Period 3", for: referenceDate),
-                Period(number: 4, startHour: 11, startMinute: 44, endHour: 12, endMinute: 42, defaultName: "Period 4", for: referenceDate),
+                Period(number: 4, startHour: 11, startMinute: 46, endHour: 12, endMinute: 42, defaultName: "Period 4", for: referenceDate),
                 Period(number: 98, startHour: 12, startMinute: 42, endHour: 13, endMinute: 17, defaultName: "Lunch", for: referenceDate),
-                Period(number: 5, startHour: 13, startMinute: 23, endHour: 14, endMinute: 21, defaultName: "Period 5", for: referenceDate),
-                Period(number: 6, startHour: 14, startMinute: 27, endHour: 15, endMinute: 25, defaultName: "Period 6", for: referenceDate),
-                Period(number: 7, startHour: 15, startMinute: 31, endHour: 16, endMinute: 36, defaultName: "Period 7", for: referenceDate)
+                Period(number: 5, startHour: 13, startMinute: 25, endHour: 14, endMinute: 21, defaultName: "Period 5", for: referenceDate),
+                Period(number: 6, startHour: 14, startMinute: 29, endHour: 15, endMinute: 25, defaultName: "Period 6", for: referenceDate),
+                Period(number: 7, startHour: 15, startMinute: 33, endHour: 16, endMinute: 38, defaultName: "Period 7", for: referenceDate)
             ]
 
         case .wednesday:
             return [
-                Period(number: 1, startHour: 9, startMinute: 0, endHour: 10, endMinute: 30, defaultName: "Period 1", for: referenceDate),
-                Period(number: 3, startHour: 10, startMinute: 36, endHour: 12, endMinute: 6, defaultName: "Period 3", for: referenceDate),
-                Period(number: 98, startHour: 12, startMinute: 6, endHour: 12, endMinute: 41, defaultName: "Lunch", for: referenceDate),
+                Period(number: 1, startHour: 9, startMinute: 0, endHour: 10, endMinute: 28, defaultName: "Period 1", for: referenceDate),
+                Period(number: 3, startHour: 10, startMinute: 36, endHour: 12, endMinute: 4, defaultName: "Period 3", for: referenceDate),
+                Period(number: 98, startHour: 12, startMinute: 4, endHour: 12, endMinute: 39, defaultName: "Lunch", for: referenceDate),
                 Period(number: 99, startHour: 12, startMinute: 47, endHour: 13, endMinute: 49, defaultName: "ACCESS", for: referenceDate),
-                Period(number: 5, startHour: 13, startMinute: 55, endHour: 15, endMinute: 25, defaultName: "Period 5", for: referenceDate)
+                Period(number: 5, startHour: 13, startMinute: 57, endHour: 15, endMinute: 25, defaultName: "Period 5", for: referenceDate)
             ]
 
         case .thursday:
             return [
                 Period(number: 0, startHour: 7, startMinute: 15, endHour: 8, endMinute: 20, defaultName: "Period 0", for: referenceDate),
-                Period(number: 2, startHour: 8, startMinute: 30, endHour: 10, endMinute: 0, defaultName: "Period 2", for: referenceDate),
-                Period(number: 4, startHour: 10, startMinute: 6, endHour: 11, endMinute: 36, defaultName: "Period 4", for: referenceDate),
-                Period(number: 98, startHour: 11, startMinute: 36, endHour: 12, endMinute: 11, defaultName: "Lunch", for: referenceDate),
+                Period(number: 2, startHour: 8, startMinute: 30, endHour: 9, endMinute: 58, defaultName: "Period 2", for: referenceDate),
+                Period(number: 4, startHour: 10, startMinute: 6, endHour: 11, endMinute: 34, defaultName: "Period 4", for: referenceDate),
+                Period(number: 98, startHour: 11, startMinute: 34, endHour: 12, endMinute: 9, defaultName: "Lunch", for: referenceDate),
                 Period(number: 99, startHour: 12, startMinute: 17, endHour: 13, endMinute: 9, defaultName: "ACCESS", for: referenceDate),
-                Period(number: 6, startHour: 13, startMinute: 15, endHour: 14, endMinute: 45, defaultName: "Period 6", for: referenceDate),
-                Period(number: 7, startHour: 14, startMinute: 51, endHour: 15, endMinute: 56, defaultName: "Period 7", for: referenceDate)
+                Period(number: 6, startHour: 13, startMinute: 17, endHour: 14, endMinute: 45, defaultName: "Period 6", for: referenceDate),
+                Period(number: 7, startHour: 14, startMinute: 53, endHour: 15, endMinute: 58, defaultName: "Period 7", for: referenceDate)
             ]
 
         case .friday:
             return [
                 Period(number: 0, startHour: 7, startMinute: 15, endHour: 8, endMinute: 20, defaultName: "Period 0", for: referenceDate),
-                Period(number: 1, startHour: 8, startMinute: 30, endHour: 9, endMinute: 28, defaultName: "Period 1", for: referenceDate),
-                Period(number: 2, startHour: 9, startMinute: 34, endHour: 10, endMinute: 32, defaultName: "Period 2", for: referenceDate),
+                Period(number: 1, startHour: 8, startMinute: 30, endHour: 9, endMinute: 26, defaultName: "Period 1", for: referenceDate),
+                Period(number: 2, startHour: 9, startMinute: 34, endHour: 10, endMinute: 30, defaultName: "Period 2", for: referenceDate),
                 Period(number: 3, startHour: 10, startMinute: 38, endHour: 11, endMinute: 38, defaultName: "Period 3", for: referenceDate),
-                Period(number: 4, startHour: 11, startMinute: 44, endHour: 12, endMinute: 42, defaultName: "Period 4", for: referenceDate),
+                Period(number: 4, startHour: 11, startMinute: 46, endHour: 12, endMinute: 42, defaultName: "Period 4", for: referenceDate),
                 Period(number: 98, startHour: 12, startMinute: 42, endHour: 13, endMinute: 17, defaultName: "Lunch", for: referenceDate),
-                Period(number: 5, startHour: 13, startMinute: 23, endHour: 14, endMinute: 21, defaultName: "Period 5", for: referenceDate),
-                Period(number: 6, startHour: 14, startMinute: 27, endHour: 15, endMinute: 25, defaultName: "Period 6", for: referenceDate),
-                Period(number: 7, startHour: 15, startMinute: 31, endHour: 16, endMinute: 36, defaultName: "Period 7", for: referenceDate)
+                Period(number: 5, startHour: 13, startMinute: 25, endHour: 14, endMinute: 21, defaultName: "Period 5", for: referenceDate),
+                Period(number: 6, startHour: 14, startMinute: 29, endHour: 15, endMinute: 25, defaultName: "Period 6", for: referenceDate),
+                Period(number: 7, startHour: 15, startMinute: 33, endHour: 16, endMinute: 38, defaultName: "Period 7", for: referenceDate)
             ]
 
         case .minimumDay:
             return [
-                Period(number: 0, startHour: 7, startMinute: 30, endHour: 8, endMinute: 5, defaultName: "Period 0", for: referenceDate),
-                Period(number: 1, startHour: 8, startMinute: 15, endHour: 8, endMinute: 50, defaultName: "Period 1", for: referenceDate),
-                Period(number: 2, startHour: 9, startMinute: 0, endHour: 9, endMinute: 35, defaultName: "Period 2", for: referenceDate),
-                Period(number: 3, startHour: 9, startMinute: 45, endHour: 10, endMinute: 20, defaultName: "Period 3", for: referenceDate),
-                Period(number: 4, startHour: 10, startMinute: 30, endHour: 11, endMinute: 5, defaultName: "Period 4", for: referenceDate),
-                Period(number: 5, startHour: 11, startMinute: 15, endHour: 11, endMinute: 50, defaultName: "Period 5", for: referenceDate),
-                Period(number: 6, startHour: 12, startMinute: 0, endHour: 12, endMinute: 35, defaultName: "Period 6", for: referenceDate),
-                Period(number: 7, startHour: 12, startMinute: 45, endHour: 13, endMinute: 20, defaultName: "Period 7", for: referenceDate)
+                Period(number: 0, startHour: 7, startMinute: 15, endHour: 8, endMinute: 20, defaultName: "Period 0", for: referenceDate),
+                Period(number: 1, startHour: 8, startMinute: 30, endHour: 9, endMinute: 0, defaultName: "Period 1", for: referenceDate),
+                Period(number: 2, startHour: 9, startMinute: 7, endHour: 9, endMinute: 37, defaultName: "Period 2", for: referenceDate),
+                Period(number: 3, startHour: 9, startMinute: 44, endHour: 10, endMinute: 14, defaultName: "Period 3", for: referenceDate),
+                Period(number: 4, startHour: 10, startMinute: 21, endHour: 10, endMinute: 51, defaultName: "Period 4", for: referenceDate),
+                Period(number: 98, startHour: 10, startMinute: 51, endHour: 11, endMinute: 6, defaultName: "Brunch", for: referenceDate),
+                Period(number: 5, startHour: 11, startMinute: 13, endHour: 11, endMinute: 43, defaultName: "Period 5", for: referenceDate),
+                Period(number: 6, startHour: 11, startMinute: 50, endHour: 12, endMinute: 20, defaultName: "Period 6", for: referenceDate),
+                Period(number: 7, startHour: 12, startMinute: 27, endHour: 12, endMinute: 57, defaultName: "Period 7", for: referenceDate)
             ]
         }
     }
